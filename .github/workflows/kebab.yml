@@ -3,46 +3,43 @@ name: OnePlus 8T
 on:
   push:
   workflow_dispatch:
-    inputs:
-      upload_release:
-        description: 'Whether to upload binaries to releases'
-        required: true
-        default: '0'
+    #inputs:
+    #  upload_release:
+    #    description: 'Whether to upload binaries to releases'
+    #    required: true
+    #    default: '0'
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     container:
-      image: pexcn/docker-images:bookworm-android
-      volumes:
-        - /usr/local:/usr/local
-        - /usr/lib/google-cloud-sdk:/usr/lib/google-cloud-sdk
-        - /usr/share/dotnet:/usr/share/dotnet
-        - /usr/share/swift:/usr/share/swift
-        - /opt/az:/opt/az
-        - /opt/google:/opt/google
-        - /opt/microsoft:/opt/microsoft
-        - /opt/pipx:/opt/pipx
-        - /opt/hostedtoolcache:/opt/hostedtoolcache
+     image: pexcn/docker-images:bookworm-android
+     volumes:
+       - /usr/local:/usr/local
+       - /usr/lib/google-cloud-sdk:/usr/lib/google-cloud-sdk
+       - /usr/share/dotnet:/usr/share/dotnet
+       - /usr/share/swift:/usr/share/swift
+       - /opt/az:/opt/az
+       - /opt/google:/opt/google
+       - /opt/microsoft:/opt/microsoft
+       - /opt/pipx:/opt/pipx
+       - /opt/hostedtoolcache:/opt/hostedtoolcache
     env:
       TZ: Asia/Taipei
-      BUILD_PROFILE: ${{ matrix.PROFILE }}
-      #BRAND_SHOW_FLAG: oneplus
+      BUILD_CONFIG: ${{ matrix.CONFIG }}
+      BRAND_SHOW_FLAG: oneplus
     strategy:
       fail-fast: false
       matrix:
-        PROFILE:
+        CONFIG:
           - nameless-aosp-14
-          - pixelos-14
+          #- pixelos-14
 
     steps:
       - name: Maximize disk space
         uses: pexcn/maximize-disk-space@v1
         with:
           use-system-docker: false
-
-      - name: SSH connection to Actions
-        uses: P3TERX/ssh2actions@v1.0.0
 
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -53,26 +50,27 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.ccache
-            /builder/.ccache
-          key: ${{ runner.os }}-${{ github.ref_name }}-${{ env.BUILD_PROFILE }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}-${{ github.ref_name }}-${{ env.BUILD_PROFILE }}-
+            ~/.cache/ccache
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/dl
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/kernel/.git
+          key: kebab-${{ env.BUILD_CONFIG }}-${{ github.sha }}
+          restore-keys: kebab-${{ env.BUILD_CONFIG }}-
 
-      - name: Build firmware
+      - name: Build Kernel
         run: ./build.sh
 
       - name: Upload to Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.BUILD_PROFILE }}
-          path: openwrt/bin
+          name: ${{ env.BUILD_CONFIG }}
+          path: build/kernel/out/arch/arm64/boot/Image
 
-      - name: Set release tag
-        run: echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
+      #- name: Set release tag
+      #  run: echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
 
-      - name: Upload to Releases
-        if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || (github.event.inputs.upload_release == 1)
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.RELEASE_TAG }}
-          files: ${{ env.BUILD_PROFILE }}.tar.gz
+      #- name: Upload to Releases
+      #  if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || (github.event.inputs.upload_release == 1)
+      #  uses: softprops/action-gh-release@v2
+      #  with:
+      #    tag_name: ${{ env.RELEASE_TAG }}
+      #    files: ${{ env.BUILD_CONFIG }}.tar.gz
