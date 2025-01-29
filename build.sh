@@ -28,6 +28,8 @@ prepare_env() {
     STRIP=llvm-strip
     LLVM=1
     LLVM_IAS=1
+    LLVM_AR=llvm-ar
+    LLVM_NM=llvm-nm
   )
 
   # setup clang
