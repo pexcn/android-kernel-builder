@@ -1,6 +1,8 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155
 
+CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
+
 prepare_env() {
   CUR_DIR=$(dirname "$(readlink -f "$0")")
   source config/$BUILD_CONFIG.conf
