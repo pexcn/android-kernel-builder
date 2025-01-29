@@ -1,12 +1,33 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155
 
-CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
-
-prepare_env() {
-  CUR_DIR=$(dirname "$(readlink -f "$0")")
-  source config/$BUILD_CONFIG.conf
+setup_env() {
   mkdir -p build dl
+
+  # set local shell variables
+  source config/$BUILD_CONFIG.conf
+  CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
+  CUR_DIR=$(dirname "$(readlink -f "$0")")
+  MAKE_FLAGS=(
+    O=out
+    ARCH=arm64
+    SUBARCH=arm64
+    CLANG_TRIPLE=aarch64-linux-gnu-
+    CROSS_COMPILE=aarch64-linux-android-
+    CC="ccache clang"
+    LD=ld.lld
+    LLVM=1
+    LLVM_IAS=1
+  )
+
+  # set environment variables
+  export PATH=$CUR_DIR/build/clang/bin:$PATH
+  export ARCH=arm64
+  export SUBARCH=arm64
+  export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-pexcn}
+  export KBUILD_BUILD_HOST=buildbot
+  export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
+  export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
 }
 
 setup_clang() {
@@ -48,7 +69,7 @@ add_kernelsu() {
 	EOF
 
   # re-generate kernel config
-  make O=out ARCH=arm64 $KERNEL_CONFIG savedefconfig
+  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG savedefconfig
   cp -f out/defconfig arch/arm64/configs/${KERNEL_CONFIG%% *}
 
   cd -
@@ -57,34 +78,15 @@ add_kernelsu() {
 build_kernel() {
   cd build/kernel
 
-  export PATH=$CUR_DIR/build/clang/bin:$PATH
-  export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-pexcn}
-  export KBUILD_BUILD_HOST=buildbot
-  export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
-  export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
-  export ARCH=arm64
-  export SUBARCH=arm64
-
-  local make_flags=(
-    O=out
-    ARCH=arm64
-    SUBARCH=arm64
-    CLANG_TRIPLE=aarch64-linux-gnu-
-    CROSS_COMPILE=aarch64-linux-android-
-    CC="ccache clang"
-    LD=ld.lld
-    LLVM=1
-    LLVM_IAS=1
-  )
   # select kernel config
-  make "${make_flags[@]}" $KERNEL_CONFIG
+  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
   # compile kernel
-  make "${make_flags[@]}" -j$(($(nproc) + 1)) || exit 1
+  make "${MAKE_FLAGS[@]}" -j$(($(nproc) + 1)) || exit 1
 
   cd -
 }
 
-prepare_env
+setup_env
 setup_clang
 get_sources
 add_kernelsu

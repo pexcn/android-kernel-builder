@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG:
-          - nameless-aosp-14
-          #- pixelos-14
+          - kebab-nameless_14
+          #- kebab-pixelos_14
 
     steps:
       - name: Checkout sources
