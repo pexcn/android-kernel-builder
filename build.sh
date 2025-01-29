@@ -3,7 +3,7 @@
 
 prepare_env() {
   CUR_DIR=$(dirname "$(readlink -f "$0")")
-  . config/$BUILD_CONFIG.conf
+  source config/$BUILD_CONFIG.conf
   mkdir -p build dl
 }
 
@@ -33,7 +33,7 @@ get_sources() {
   git diff --quiet HEAD || git reset --hard HEAD
 
   # checkout version
-  git checkout $KERNEL_VERSION
+  git checkout $KERNEL_COMMIT
 
   # remove `-dirty` of version
   sed -i 's/ -dirty//g' scripts/setlocalversion
@@ -69,6 +69,7 @@ build_kernel() {
   export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-pexcn}
   export KBUILD_BUILD_HOST=buildbot
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
+  export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
   export ARCH=arm64 # really need?
   export SUBARCH=arm64 # really need?
 
