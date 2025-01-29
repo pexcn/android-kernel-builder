@@ -45,7 +45,7 @@ add_kernelsu() {
   cd build/kernel
 
   # integrate kernelsu-next
-  curl -sSL "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s $KSU_NEXT_VERSION
+  curl -sSL "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.4
 
   # update kernel config
   cat <<-EOF >>arch/arm64/configs/${KERNEL_CONFIG%% *}
@@ -72,7 +72,7 @@ build_kernel() {
   export ARCH=arm64 # really need?
   export SUBARCH=arm64 # really need?
 
-  MAKE_FLAGS=(
+  local make_flags=(
     O=out
     ARCH=arm64
     CLANG_TRIPLE=aarch64-linux-gnu-
@@ -83,9 +83,9 @@ build_kernel() {
     LLVM_IAS=1
   )
   # select kernel config
-  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
+  make "${make_flags[@]}" $KERNEL_CONFIG
   # compile kernel
-  make "${MAKE_FLAGS[@]}" -j$(($(nproc) + 1)) || exit 1
+  make "${make_flags[@]}" -j$(($(nproc) + 1)) || exit 1
 
   cd -
 }
