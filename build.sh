@@ -17,6 +17,13 @@ prepare_env() {
     CROSS_COMPILE=aarch64-linux-android-
     CC="ccache clang"
     LD=ld.lld
+    AR=llvm-ar
+    NM=llvm-nm
+    OBJCOPY=llvm-objcopy
+    OBJDUMP=llvm-objdump
+    READELF=llvm-readelf
+    OBJSIZE=llvm-size
+    STRIP=llvm-strip
     LLVM=1
     LLVM_IAS=1
   )
