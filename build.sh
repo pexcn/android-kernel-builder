@@ -65,7 +65,7 @@ add_kernelsu() {
 build_kernel() {
   cd build/kernel
 
-  export PATH=$CUR_DIR/build/clang/bin:$CUR_DIR/build/gcc/bin:$PATH
+  export PATH=$CUR_DIR/build/clang/bin:$PATH
   export KBUILD_BUILD_USER=${GITHUB_REPOSITORY_OWNER:-pexcn}
   export KBUILD_BUILD_HOST=buildbot
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
