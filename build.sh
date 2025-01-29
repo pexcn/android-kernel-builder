@@ -13,7 +13,7 @@ prepare_env() {
     O=out
     ARCH=arm64
     SUBARCH=arm64
-    CLANG_TRIPLE=aarch64-linux-gnu-
+    CLANG_TRIPLE=aarch64-linux-android-
     CROSS_COMPILE=aarch64-linux-android-
     CC="ccache clang"
     LD=ld.lld
