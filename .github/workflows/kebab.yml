@@ -23,7 +23,7 @@ jobs:
       matrix:
         CONFIG:
           - kebab-nameless_14
-          #- kebab-pixelos_14
+          - kebab-pixelos_14
 
     steps:
       - name: Checkout sources
