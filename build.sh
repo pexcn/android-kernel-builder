@@ -1,8 +1,9 @@
 #!/bin/bash
 # shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155
 
-setup_env() {
-  mkdir -p build dl
+prepare_env() {
+  mkdir build
+  mkdir download
 
   # set local shell variables
   source config/$BUILD_CONFIG.conf
@@ -20,6 +21,11 @@ setup_env() {
     LLVM_IAS=1
   )
 
+  # setup clang
+  local clang_pack="$(basename $CLANG_URL)"
+  [ -f download/$clang_pack ] || wget -q $CLANG_URL -P download
+  mkdir build/clang && tar -C build/clang/ -zxf download/$clang_pack
+
   # set environment variables
   export PATH=$CUR_DIR/build/clang/bin:$PATH
   export ARCH=arm64
@@ -28,16 +34,6 @@ setup_env() {
   export KBUILD_BUILD_HOST=buildbot
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
   export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
-}
-
-setup_clang() {
-  cd build
-
-  local clang_pack="$(basename $CLANG_URL)"
-  [ -f $CUR_DIR/dl/$clang_pack ] || wget -q $CLANG_URL -P $CUR_DIR/dl
-  mkdir clang && tar -C clang/ -zxf $CUR_DIR/dl/$clang_pack
-
-  cd -
 }
 
 get_sources() {
@@ -86,8 +82,7 @@ build_kernel() {
   cd -
 }
 
-setup_env
-setup_clang
+prepare_env
 get_sources
 add_kernelsu
 build_kernel

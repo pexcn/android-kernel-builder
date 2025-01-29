@@ -36,7 +36,7 @@ jobs:
         with:
           path: |
             ~/.cache/ccache
-            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/dl
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/download
             /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/kernel/.git
           key: kebab-${{ env.BUILD_CONFIG }}-${{ github.sha }}
           restore-keys: kebab-${{ env.BUILD_CONFIG }}-
