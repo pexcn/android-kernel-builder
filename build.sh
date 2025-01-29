@@ -86,7 +86,7 @@ build_kernel() {
   # select kernel config
   make "${make_flags[@]}" $KERNEL_CONFIG
   # compile kernel
-  make "${make_flags[@]}" -j$(($(nproc) + 1)) V=1 || exit 1
+  make "${make_flags[@]}" -j$(($(nproc) + 1)) || exit 1
 
   cd -
 }
