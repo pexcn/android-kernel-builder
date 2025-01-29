@@ -96,5 +96,3 @@ setup_gcc
 get_sources
 add_kernelsu
 build_kernel
-
-df -h

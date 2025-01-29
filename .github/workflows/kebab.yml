@@ -14,16 +14,6 @@ jobs:
     runs-on: ubuntu-24.04
     container:
      image: pexcn/docker-images:bookworm-android
-     volumes:
-       - /usr/local:/usr/local
-       - /usr/lib/google-cloud-sdk:/usr/lib/google-cloud-sdk
-       - /usr/share/dotnet:/usr/share/dotnet
-       - /usr/share/swift:/usr/share/swift
-       - /opt/az:/opt/az
-       - /opt/google:/opt/google
-       - /opt/microsoft:/opt/microsoft
-       - /opt/pipx:/opt/pipx
-       - /opt/hostedtoolcache:/opt/hostedtoolcache
     env:
       TZ: Asia/Taipei
       BUILD_CONFIG: ${{ matrix.CONFIG }}
@@ -36,11 +26,6 @@ jobs:
           #- pixelos-14
 
     steps:
-      - name: Maximize disk space
-        uses: pexcn/maximize-disk-space@v1
-        with:
-          use-system-docker: false
-
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
