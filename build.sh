@@ -17,16 +17,6 @@ setup_clang() {
   cd -
 }
 
-setup_gcc() {
-  cd build
-
-  local gcc_pack="$(basename $GCC_URL)"
-  [ -f $CUR_DIR/dl/$gcc_pack ] || wget -q $GCC_URL -P $CUR_DIR/dl
-  mkdir gcc && tar -C gcc/ -zxf $CUR_DIR/dl/$gcc_pack
-
-  cd -
-}
-
 get_sources() {
   [ -d build/kernel/.git ] || git clone $KERNEL_SOURCE build/kernel
   cd build/kernel
@@ -70,12 +60,13 @@ build_kernel() {
   export KBUILD_BUILD_HOST=buildbot
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
   export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
-  export ARCH=arm64 # really need?
-  export SUBARCH=arm64 # really need?
+  export ARCH=arm64
+  export SUBARCH=arm64
 
   local make_flags=(
     O=out
     ARCH=arm64
+    SUBARCH=arm64
     CLANG_TRIPLE=aarch64-linux-gnu-
     CROSS_COMPILE=aarch64-linux-android-
     CC="ccache clang"
@@ -93,7 +84,6 @@ build_kernel() {
 
 prepare_env
 setup_clang
-setup_gcc
 get_sources
 add_kernelsu
 build_kernel
