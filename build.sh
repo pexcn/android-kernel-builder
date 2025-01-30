@@ -7,6 +7,7 @@ prepare_env() {
 
   # updatable part
   CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
+  AK3_VERSION=db90e19aae369c9c10b956a08003cee3958d50a0
 
   # set local shell variables
   source config/$DEVICE_CODENAME/$BUILD_CONFIG.conf
@@ -97,7 +98,31 @@ build_kernel() {
   cd -
 }
 
+package_kernel() {
+  git clone https://github.com/osm0sis/AnyKernel3.git -b master --single-branch build/anykernel3
+  cd build/anykernel3
+  git checkout $AK3_VERSION
+
+  # update properties
+  sed -i '/device.name[1-4]/d' anykernel.sh
+  sed -i 's/device.name5=/device.name1='"$DEVICE_CODENAME"'/g' anykernel.sh
+  sed -i 's|BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;|BLOCK=auto;|g' anykernel.sh
+  sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' anykernel.sh
+  sed -i '/^PATCH_VBMETA_FLAG=auto;/a NO_MAGISK_CHECK=1;' anykernel.sh
+
+  # clean folder
+  rm -rf .git .github README.md
+  find . -name "placeholder" -delete
+
+  # packaging
+  cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image .
+  zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-kernel.zip ./*
+
+  cd -
+}
+
 prepare_env
 get_sources
 add_kernelsu
 build_kernel
+package_kernel

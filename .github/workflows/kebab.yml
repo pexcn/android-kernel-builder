@@ -49,8 +49,8 @@ jobs:
       - name: Upload to Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.BUILD_CONFIG }}
-          path: build/kernel/out/arch/arm64/boot/Image
+          name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel
+          path: build/anykernel3
 
       #- name: Set release tag
       #  run: echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
