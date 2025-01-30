@@ -17,13 +17,15 @@ jobs:
     env:
       TZ: Asia/Taipei
       BUILD_CONFIG: ${{ matrix.CONFIG }}
+      DEVICE_CODENAME: kebab
+      # device extras
       BRAND_SHOW_FLAG: oneplus
     strategy:
       fail-fast: false
       matrix:
         CONFIG:
-          - kebab-nameless_14
-          - kebab-pixelos_14
+          - nameless-14
+          - pixelos-14
 
     steps:
       - name: Checkout sources
@@ -38,8 +40,8 @@ jobs:
             ~/.cache/ccache
             /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/download
             /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/kernel/.git
-          key: kebab-${{ env.BUILD_CONFIG }}-${{ github.sha }}
-          restore-keys: kebab-${{ env.BUILD_CONFIG }}-
+          key: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ github.sha }}
+          restore-keys: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-
 
       - name: Build Kernel
         run: ./build.sh
