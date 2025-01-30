@@ -5,9 +5,11 @@ prepare_env() {
   mkdir build
   mkdir download
 
+  # updatable
+  CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
+
   # set local shell variables
   source config/$BUILD_CONFIG.conf
-  CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
   CUR_DIR=$(dirname "$(readlink -f "$0")")
   MAKE_FLAGS=(
     O=out
