@@ -2,8 +2,8 @@
 # shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155
 
 prepare_env() {
-  mkdir build
-  mkdir download
+  mkdir -p build
+  mkdir -p download
 
   # updatable part
   CLANG_URL=https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r530567.tar.gz
