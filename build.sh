@@ -64,7 +64,7 @@ get_sources() {
 }
 
 add_kernelsu() {
-  [ "$ADD_KERNELSU" = true ] || return 0
+  [ "$ADD_KERNELSU" != false ] || return 0
 
   cd build/kernel
 
