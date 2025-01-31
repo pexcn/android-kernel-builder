@@ -48,6 +48,10 @@ prepare_env() {
   export KBUILD_BUILD_HOST=buildbot
   export KBUILD_COMPILER_STRING="$(clang --version | head -1 | sed 's/ (https.*//')"
   export KBUILD_LINKER_STRING="$(ld.lld --version | head -1 | sed 's/ (compatible.*//')"
+
+  # set release tag
+  RELEASE_TAG=$(date +%Y%m%d)
+  echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
 }
 
 get_sources() {
@@ -115,7 +119,6 @@ package_kernel() {
   find . -name "placeholder" -delete
 
   # packaging
-  echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
   cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image .
   zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-$RELEASE_TAG.zip ./*
 
