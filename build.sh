@@ -55,7 +55,7 @@ prepare_env() {
 }
 
 get_sources() {
-  [ -d build/kernel/.git ] || git clone $KERNEL_SOURCE build/kernel
+  [ -d build/kernel/.git ] || git clone $KERNEL_SOURCE --recurse-submodules build/kernel
   cd build/kernel
   git diff --quiet HEAD || git reset --hard HEAD
 
