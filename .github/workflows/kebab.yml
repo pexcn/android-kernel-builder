@@ -52,9 +52,9 @@ jobs:
           name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel-${{ env.RELEASE_TAG }}
           path: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel-${{ env.RELEASE_TAG }}.zip
 
-      #- name: Upload to Releases
-      #  if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || (github.event.inputs.upload_release == 1)
-      #  uses: softprops/action-gh-release@v2
-      #  with:
-      #    tag_name: ${{ env.RELEASE_TAG }}
-      #    files: ${{ env.BUILD_CONFIG }}.tar.gz
+      - name: Upload to Releases
+        if: github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel-${{ env.RELEASE_TAG }}.zip
