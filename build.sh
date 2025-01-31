@@ -121,6 +121,8 @@ package_kernel() {
 
   # packaging
   cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image .
+  [ ! -f $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb ] || cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb .
+  [ ! -f $CUR_DIR/build/kernel/out/arch/arm64/boot/dtbo.img ] || cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtbo.img .
   zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-$RELEASE_TAG.zip ./*
 
   cd -
