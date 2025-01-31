@@ -1,0 +1,60 @@
+name: Redmi K40S
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      add_kernelsu:
+        description: 'Add KernelSU'
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+     image: pexcn/docker-images:bookworm-android
+    env:
+      TZ: Asia/Taipei
+      ADD_KERNELSU: ${{ github.event.inputs.add_kernelsu }}
+      BUILD_CONFIG: ${{ matrix.CONFIG }}
+      DEVICE_CODENAME: munch
+    strategy:
+      fail-fast: false
+      matrix:
+        CONFIG:
+          - e404
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Make build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ccache
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/download
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/kernel/.git
+          key: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ github.sha }}
+          restore-keys: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-
+
+      - name: Build Kernel
+        run: ./build.sh
+
+      - name: Upload to Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ env.RELEASE_TAG }}
+          path: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ env.RELEASE_TAG }}.zip
+
+      - name: Upload to Releases
+        if: github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ env.RELEASE_TAG }}.zip
