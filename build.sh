@@ -115,8 +115,9 @@ package_kernel() {
   find . -name "placeholder" -delete
 
   # packaging
+  echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
   cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image .
-  zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-kernel.zip ./*
+  zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-kernel-$RELEASE_TAG.zip ./*
 
   cd -
 }

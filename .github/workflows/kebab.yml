@@ -49,11 +49,8 @@ jobs:
       - name: Upload to Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel
-          path: build/anykernel3
-
-      #- name: Set release tag
-      #  run: echo "RELEASE_TAG=$(date +%Y%m%d)" >> $GITHUB_ENV
+          name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel-${{ env.RELEASE_TAG }}
+          path: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel-${{ env.RELEASE_TAG }}.zip
 
       #- name: Upload to Releases
       #  if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || (github.event.inputs.upload_release == 1)
