@@ -102,6 +102,14 @@ optimize_config() {
     --enable CONFIG_LRU_GEN \
     --enable CONFIG_LRU_GEN_ENABLED \
     --enable CONFIG_STRIP_ASM_SYMS
+  # enable full lto
+  scripts/config --file out/.config \
+    --disable CONFIG_LTO_NONE \
+    --disable CONFIG_THINLTO \
+    --enable CONFIG_LTO \
+    --enable CONFIG_LTO_CLANG \
+    --disable CONFIG_LTO_CLANG_THIN \
+    --enable CONFIG_LTO_CLANG_FULL
   # optimize kernel compression
   scripts/config --file out/.config \
     --disable CONFIG_KERNEL_GZIP \
