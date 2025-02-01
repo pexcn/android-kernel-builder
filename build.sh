@@ -100,7 +100,19 @@ optimize_config() {
     --enable CONFIG_STRIP_ASM_SYMS
   scripts/config --file out/.config \
     --disable CONFIG_MMC \
-    --disable CONFIG_MMC_TEST
+    --disable CONFIG_SLUB_DEBUG \
+    --disable CONFIG_SPMI_MSM_PMIC_ARB_DEBUG \
+    --disable CONFIG_VIDEO_ADV_DEBUG \
+    --disable CONFIG_MSM_DEBUGCC_KONA \
+    --disable CONFIG_DEBUG_KERNEL \
+    --disable CONFIG_DEBUG_ALIGN_RODATA \
+    --disable CONFIG_KMALLOC_DEBUG \
+    --disable CONFIG_VMALLOC_DEBUG \
+    --disable CONFIG_VSERVICES_LOCK_DEBUG \
+    --disable CONFIG_DEBUG_INFO \
+    --disable CONFIG_SCHED_DEBUG \
+    --disable CONFIG_DEBUG_BUGVERBOSE \
+    --disable CONFIG_DEBUG_LIST
 
   # re-generate kernel config
   make "${MAKE_FLAGS[@]}" savedefconfig
