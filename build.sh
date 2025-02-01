@@ -111,7 +111,6 @@ optimize_config() {
   scripts/config --file out/.config \
     --disable CONFIG_ALLOW_DEV_COREDUMP \
     --disable CONFIG_QCOM_MINIDUMP \
-    --disable CONFIG_QCOM_MEMORY_DUMP_V2 \
     --disable CONFIG_SLUB_DEBUG \
     --disable CONFIG_SPMI_MSM_PMIC_ARB_DEBUG \
     --disable CONFIG_VIDEO_ADV_DEBUG \
