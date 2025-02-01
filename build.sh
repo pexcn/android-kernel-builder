@@ -73,15 +73,15 @@ add_kernelsu() {
   curl -sSL "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.4
 
   # update kernel config
-  cat <<-EOF >>arch/arm64/configs/${KERNEL_CONFIG%% *}
-	CONFIG_MODULES=y
-	CONFIG_KPROBES=y
-	CONFIG_HAVE_KPROBES=y
-	CONFIG_KPROBE_EVENTS=y
-	EOF
+  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
+  scripts/config --file out/.config \
+    --enable CONFIG_MODULES \
+    --enable CONFIG_KPROBES \
+    --enable CONFIG_HAVE_KPROBES \
+    --enable CONFIG_KPROBE_EVENTS
 
   # re-generate kernel config
-  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG savedefconfig
+  make "${MAKE_FLAGS[@]}" savedefconfig
   cp -f out/defconfig arch/arm64/configs/${KERNEL_CONFIG%% *}
 
   cd -
