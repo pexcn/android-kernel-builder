@@ -69,7 +69,7 @@ get_sources() {
 }
 
 add_kernelsu() {
-  [ "$ADD_KERNELSU" != false ] || return 0
+  [ "$DISABLE_KERNELSU" != true ] || return 0
 
   cd build/kernel
 
