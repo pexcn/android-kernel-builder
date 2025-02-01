@@ -9,6 +9,11 @@ on:
         type: boolean
         required: true
         default: false
+      disable_optimize:
+        description: 'Disable Optimize'
+        type: boolean
+        required: true
+        default: false
       upload_release:
         description: 'Upload to Releases'
         type: boolean
@@ -26,6 +31,7 @@ jobs:
     env:
       TZ: Asia/Taipei
       DISABLE_KERNELSU: ${{ github.event.inputs.disable_kernelsu }}
+      DISABLE_OPTIMIZE: ${{ github.event.inputs.disable_optimize }}
       BUILD_CONFIG: ${{ matrix.CONFIG }}
       DEVICE_CODENAME: munch
     strategy:

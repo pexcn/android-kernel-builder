@@ -87,6 +87,28 @@ add_kernelsu() {
   cd -
 }
 
+optimize_config() {
+  [ "$DISABLE_OPTIMIZE" != true ] || return 0
+
+  cd build/kernel
+
+  # update kernel config
+  make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
+  scripts/config --file out/.config \
+    --enable CONFIG_LRU_GEN \
+    --enable CONFIG_LRU_GEN_ENABLED \
+    --enable CONFIG_STRIP_ASM_SYMS
+  scripts/config --file out/.config \
+    --disable CONFIG_MMC \
+    --disable CONFIG_MMC_TEST
+
+  # re-generate kernel config
+  make "${MAKE_FLAGS[@]}" savedefconfig
+  cp -f out/defconfig arch/arm64/configs/${KERNEL_CONFIG%% *}
+
+  cd -
+}
+
 build_kernel() {
   cd build/kernel
 
@@ -127,5 +149,6 @@ package_kernel() {
 prepare_env
 get_sources
 add_kernelsu
+optimize_config
 build_kernel
 package_kernel
