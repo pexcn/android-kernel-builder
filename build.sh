@@ -102,6 +102,28 @@ optimize_config() {
     --enable CONFIG_LRU_GEN \
     --enable CONFIG_LRU_GEN_ENABLED \
     --enable CONFIG_STRIP_ASM_SYMS
+  # optimize kernel compression
+  scripts/config --file out/.config \
+    --disable CONFIG_KERNEL_GZIP \
+    --enable CONFIG_KERNEL_LZ4 \
+    --enable CONFIG_HAVE_KERNEL_LZ4 \
+    --enable CONFIG_RD_LZ4 \
+    --enable CONFIG_CRYPTO_LZ4
+  # optimize network scheduler
+  scripts/config --file out/.config \
+    --enable CONFIG_NET_SCH_FQ_CODEL \
+    --enable CONFIG_NET_SCH_DEFAULT \
+    --enable CONFIG_DEFAULT_FQ_CODEL \
+    --set-str CONFIG_DEFAULT_NET_SCH "fq_codel"
+  # optimize tcp congestion control
+  scripts/config --file out/.config \
+    --disable CONFIG_TCP_CONG_BIC \
+    --disable CONFIG_TCP_CONG_HTCP \
+    --enable CONFIG_TCP_CONG_ADVANCED \
+    --enable CONFIG_TCP_CONG_BBR \
+    --enable CONFIG_TCP_CONG_WESTWOOD \
+    --enable CONFIG_DEFAULT_WESTWOOD \
+    --set-str CONFIG_DEFAULT_TCP_CONG "westwood"
   # disable unused features
   scripts/config --file out/.config \
     --disable CONFIG_CAN \
