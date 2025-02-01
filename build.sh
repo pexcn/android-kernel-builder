@@ -106,7 +106,6 @@ optimize_config() {
   scripts/config --file out/.config \
     --disable CONFIG_CAN \
     --disable CONFIG_MMC \
-    --disable CONFIG_CORESIGHT \
     --disable CONFIG_FTRACE
   # disable debug options
   scripts/config --file out/.config \
