@@ -72,8 +72,10 @@ add_kernelsu() {
   # integrate kernelsu-next
   curl -sSL "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.4
 
-  # update kernel config
+  # generate .config from defconfig
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
+
+  # update .config for kernelsu-next
   scripts/config --file out/.config \
     --enable CONFIG_MODULES \
     --enable CONFIG_KPROBES \
@@ -92,14 +94,26 @@ optimize_config() {
 
   cd build/kernel
 
-  # update kernel config
+  # generate .config from defconfig
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
+
+  # enable optimizations
   scripts/config --file out/.config \
     --enable CONFIG_LRU_GEN \
     --enable CONFIG_LRU_GEN_ENABLED \
     --enable CONFIG_STRIP_ASM_SYMS
+  # disable unused features
   scripts/config --file out/.config \
+    --disable CONFIG_CAN \
     --disable CONFIG_MMC \
+    --disable CONFIG_CORESIGHT \
+    --disable CONFIG_FTRACE
+  # disable debug options
+  scripts/config --file out/.config \
+    --disable CONFIG_BUG \
+    --disable CONFIG_ALLOW_DEV_COREDUMP \
+    --disable CONFIG_QCOM_MINIDUMP \
+    --disable CONFIG_QCOM_MEMORY_DUMP_V2 \
     --disable CONFIG_SLUB_DEBUG \
     --disable CONFIG_SPMI_MSM_PMIC_ARB_DEBUG \
     --disable CONFIG_VIDEO_ADV_DEBUG \
