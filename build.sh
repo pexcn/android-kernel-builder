@@ -72,10 +72,10 @@ add_kernelsu() {
   # integrate kernelsu-next
   curl -sSL "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.4
 
-  # generate .config from defconfig
+  # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
-  # update .config for kernelsu-next
+  # update .config
   scripts/config --file out/.config \
     --enable CONFIG_MODULES \
     --enable CONFIG_KPROBES \
@@ -94,7 +94,7 @@ optimize_config() {
 
   cd build/kernel
 
-  # generate .config from defconfig
+  # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
   # enable optimizations
@@ -110,7 +110,6 @@ optimize_config() {
     --disable CONFIG_FTRACE
   # disable debug options
   scripts/config --file out/.config \
-    --disable CONFIG_BUG \
     --disable CONFIG_ALLOW_DEV_COREDUMP \
     --disable CONFIG_QCOM_MINIDUMP \
     --disable CONFIG_QCOM_MEMORY_DUMP_V2 \
