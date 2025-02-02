@@ -4,8 +4,8 @@ on:
   push:
   workflow_dispatch:
     inputs:
-      disable_kernelsu:
-        description: 'Disable KernelSU'
+      dont_patch_kernelsu:
+        description: 'Don't patch KernelSU'
         type: boolean
         required: true
         default: false
@@ -30,7 +30,7 @@ jobs:
      image: pexcn/docker-images:bookworm-android
     env:
       TZ: Asia/Taipei
-      DISABLE_KERNELSU: ${{ github.event.inputs.disable_kernelsu }}
+      DONT_PATCH_KERNELSU: ${{ github.event.inputs.dont_patch_kernelsu }}
       DISABLE_OPTIMIZE: ${{ github.event.inputs.disable_optimize }}
       BUILD_CONFIG: ${{ matrix.CONFIG }}
       DEVICE_CODENAME: munch
