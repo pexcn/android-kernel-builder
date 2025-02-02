@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       dont_patch_kernelsu:
-        description: 'Don't patch KernelSU'
+        description: "Don't patch KernelSU"
         type: boolean
         required: true
         default: false
