@@ -16,7 +16,7 @@ prepare_env() {
     O=out
     ARCH=arm64
     SUBARCH=arm64
-    CLANG_TRIPLE=aarch64-linux-android-
+    CLANG_TRIPLE=aarch64-linux-gnu-
     CROSS_COMPILE=aarch64-linux-android-
     CROSS_COMPILE_COMPAT=arm-linux-androideabi-
     CROSS_COMPILE_ARM32=arm-linux-androideabi-
