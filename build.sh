@@ -100,8 +100,6 @@ optimize_config() {
 
   # enable optimizations
   scripts/config --file out/.config \
-    --enable CONFIG_LRU_GEN \
-    --enable CONFIG_LRU_GEN_ENABLED \
     --enable CONFIG_STRIP_ASM_SYMS
   # enable full lto
   scripts/config --file out/.config \
