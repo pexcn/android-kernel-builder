@@ -184,7 +184,7 @@ package_kernel() {
   sed -i 's/device.name5=/device.name1='"$DEVICE_CODENAME"'/g' anykernel.sh
   sed -i 's|BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;|BLOCK=auto;|g' anykernel.sh
   sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' anykernel.sh
-  sed -i '/^PATCH_VBMETA_FLAG=auto;/a NO_MAGISK_CHECK=1;' anykernel.sh
+  #sed -i '/^PATCH_VBMETA_FLAG=auto;/a NO_MAGISK_CHECK=1;' anykernel.sh
 
   # clean folder
   rm -rf .git .github README.md
