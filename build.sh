@@ -127,7 +127,6 @@ optimize_config() {
     --disable CONFIG_TCP_CONG_BIC \
     --disable CONFIG_TCP_CONG_HTCP \
     --enable CONFIG_TCP_CONG_ADVANCED \
-    --enable CONFIG_TCP_CONG_BBR \
     --enable CONFIG_TCP_CONG_WESTWOOD \
     --enable CONFIG_DEFAULT_WESTWOOD \
     --set-str CONFIG_DEFAULT_TCP_CONG "westwood"
