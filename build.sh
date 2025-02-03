@@ -135,7 +135,10 @@ optimize_config() {
   scripts/config --file out/.config \
     --disable CONFIG_CAN \
     --disable CONFIG_MMC \
-    --disable CONFIG_FTRACE
+    --disable CONFIG_FTRACE \
+    --disable CONFIG_PSTORE \
+    --disable CONFIG_SVELTE \
+    --disable CONFIG_IOMONITOR
   # disable debug options
   scripts/config --file out/.config \
     --disable CONFIG_ALLOW_DEV_COREDUMP \
@@ -148,6 +151,7 @@ optimize_config() {
     --disable CONFIG_DEBUG_ALIGN_RODATA \
     --disable CONFIG_KMALLOC_DEBUG \
     --disable CONFIG_VMALLOC_DEBUG \
+    --disable CONFIG_DUMP_TASKS_MEM \
     --disable CONFIG_VSERVICES_LOCK_DEBUG \
     --disable CONFIG_DEBUG_INFO \
     --disable CONFIG_SCHED_DEBUG \
