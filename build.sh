@@ -136,7 +136,6 @@ optimize_config() {
     --disable CONFIG_CAN \
     --disable CONFIG_MMC \
     --disable CONFIG_FTRACE \
-    --disable CONFIG_PSTORE \
     --disable CONFIG_SVELTE \
     --disable CONFIG_IOMONITOR
   # disable debug options
