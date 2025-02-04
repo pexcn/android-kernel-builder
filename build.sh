@@ -98,6 +98,10 @@ optimize_config() {
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
+  # build `Image*-dtb`
+  scripts/config --file out/.config \
+    --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
+    --enable CONFIG_BUILD_ARM64_DT_OVERLAY
   # enable optimizations
   scripts/config --file out/.config \
     --enable CONFIG_STRIP_ASM_SYMS
@@ -109,10 +113,6 @@ optimize_config() {
     --enable CONFIG_LTO_CLANG \
     --disable CONFIG_LTO_CLANG_THIN \
     --enable CONFIG_LTO_CLANG_FULL
-  # optimize boot options
-  scripts/config --file out/.config \
-    --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
-    --enable CONFIG_BUILD_ARM64_DT_OVERLAY
   # optimize kernel compression
   scripts/config --file out/.config \
     --disable CONFIG_KERNEL_GZIP \
