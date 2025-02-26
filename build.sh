@@ -56,6 +56,7 @@ get_sources() {
   cd build/kernel
   git diff --quiet HEAD || {
     git reset --hard HEAD
+    git pull origin "$(git for-each-ref --format '%(refname:lstrip=2)' refs/heads | head -1)"
     git submodule update --init --recursive
   }
 
