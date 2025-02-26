@@ -61,7 +61,7 @@ get_sources() {
   }
 
   # checkout version
-  git checkout $KERNEL_COMMIT
+  git checkout $KERNEL_COMMIT || exit 1
 
   # remove `-dirty` of version
   sed -i 's/ -dirty//g' scripts/setlocalversion
