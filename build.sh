@@ -109,14 +109,14 @@ optimize_config() {
   # enable optimizations
   scripts/config --file out/.config \
     --enable CONFIG_STRIP_ASM_SYMS
-  # enable full lto
+  # enable thin lto
   scripts/config --file out/.config \
-    --disable CONFIG_LTO_NONE \
-    --disable CONFIG_THINLTO \
     --enable CONFIG_LTO \
     --enable CONFIG_LTO_CLANG \
-    --disable CONFIG_LTO_CLANG_THIN \
-    --enable CONFIG_LTO_CLANG_FULL
+    --enable CONFIG_LTO_CLANG_THIN \
+    --disable CONFIG_LTO_CLANG_FULL \
+    --enable CONFIG_THINLTO \
+    --disable CONFIG_LTO_NONE
   # optimize kernel compression
   scripts/config --file out/.config \
     --disable CONFIG_KERNEL_GZIP \
