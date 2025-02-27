@@ -10,7 +10,7 @@ prepare_env() {
   AK3_VERSION=db90e19aae369c9c10b956a08003cee3958d50a0
 
   # set local shell variables
-  source config/$DEVICE_CODENAME/$BUILD_CONFIG.conf
+  source config/$DEVICE_CODENAME/$BUILD_CONFIG/cfg
   CUR_DIR=$(dirname "$(readlink -f "$0")")
   MAKE_FLAGS=(
     O=out
@@ -66,6 +66,16 @@ get_sources() {
   # remove `-dirty` of version
   sed -i 's/ -dirty//g' scripts/setlocalversion
 
+  cd -
+}
+
+patch_kernel() {
+  [ -d config/$DEVICE_CODENAME/$BUILD_CONFIG/patches ] || return 0
+
+  cd build/kernel
+  for patch in "$CUR_DIR"/config/"$DEVICE_CODENAME"/"$BUILD_CONFIG"/patches/*.patch; do
+    git apply $patch
+  done
   cd -
 }
 
@@ -213,6 +223,7 @@ package_kernel() {
 
 prepare_env
 get_sources
+patch_kernel
 add_kernelsu
 optimize_config
 build_kernel
