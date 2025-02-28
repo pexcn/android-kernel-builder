@@ -74,6 +74,7 @@ patch_kernel() {
 
   cd build/kernel
   for patch in "$CUR_DIR"/config/"$DEVICE_CODENAME"/"$BUILD_CONFIG"/patches/*.patch; do
+    echo "Applying $(basename $patch)."
     git apply $patch
   done
   cd -
