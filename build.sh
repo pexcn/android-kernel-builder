@@ -93,10 +93,8 @@ add_kernelsu() {
 
   # update .config
   scripts/config --file out/.config \
-    --enable CONFIG_MODULES \
-    --enable CONFIG_KPROBES \
-    --enable CONFIG_HAVE_KPROBES \
-    --enable CONFIG_KPROBE_EVENTS
+    --enable CONFIG_KSU \
+    --disable CONFIG_KSU_WITH_KPROBES
 
   # re-generate kernel config
   make "${MAKE_FLAGS[@]}" savedefconfig
