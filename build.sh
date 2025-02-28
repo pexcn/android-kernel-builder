@@ -75,7 +75,7 @@ patch_kernel() {
   cd build/kernel
   for patch in "$CUR_DIR"/config/"$DEVICE_CODENAME"/"$BUILD_CONFIG"/patches/*.patch; do
     echo "Applying $(basename $patch)."
-    git apply $patch
+    git apply $patch || exit 2
   done
   cd -
 }
@@ -190,7 +190,7 @@ build_kernel() {
   # select kernel config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
   # compile kernel
-  make "${MAKE_FLAGS[@]}" -j$(($(nproc) + 1)) || exit 1
+  make "${MAKE_FLAGS[@]}" -j$(($(nproc) + 1)) || exit 3
 
   cd -
 }
