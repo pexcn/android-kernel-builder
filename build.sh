@@ -119,6 +119,8 @@ optimize_config() {
     --enable CONFIG_BUILD_ARM64_DT_OVERLAY
   # enable optimizations
   scripts/config --file out/.config \
+    --enable CONFIG_INLINE_OPTIMIZATION \
+    --enable CONFIG_POLLY_CLANG \
     --enable CONFIG_STRIP_ASM_SYMS
   # enable thin lto
   scripts/config --file out/.config \
