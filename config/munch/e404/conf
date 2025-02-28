@@ -1,5 +1,5 @@
 KERNEL_SOURCE=https://github.com/kvsnr113/xiaomi_sm8250_kernel.git
-KERNEL_COMMIT=3092c28ea8df8351b91abcb29845473440d05bda
+KERNEL_COMMIT=77e6dfd9d82dbcb7006c62d9e55e78c0cdd19af4
 KERNEL_CONFIG=vendor/munch_defconfig
 
 # kernelsu is built-in in kernel source
