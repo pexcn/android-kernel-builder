@@ -1,7 +1,7 @@
-From cbdb0db82d6750c0767427b398002c0480580aa3 Mon Sep 17 00:00:00 2001
+From 22fe3541802731211736b9731ab2f8701a8c6285 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Fri, 28 Feb 2025 21:38:25 +0800
-Subject: [PATCH] manual hooks for kernelsu-next
+Subject: [PATCH 1/3] manual hooks for kernelsu-next
 
 scope-minimized manual hooks for kernelsu-next, this changes can hides root better.
 
@@ -11,11 +11,11 @@ https://t.me/ksunext/364
 ---
  drivers/input/input.c |  9 +++++++++
  drivers/tty/pty.c     |  7 +++++++
- fs/exec.c             | 14 ++++++++++++++
+ fs/exec.c             | 18 ++++++++++++++++++
  fs/open.c             |  8 ++++++++
  fs/read_write.c       | 10 ++++++++++
- fs/stat.c             |  7 +++++++
- 6 files changed, 55 insertions(+)
+ fs/stat.c             | 10 ++++++++++
+ 6 files changed, 62 insertions(+)
 
 diff --git a/drivers/input/input.c b/drivers/input/input.c
 index 6392aca3c..bd6c51822 100644
@@ -66,7 +66,7 @@ index 73226e482..2133cfd65 100644
  	tty = devpts_get_priv(file->f_path.dentry);
  	mutex_unlock(&devpts_mutex);
 diff --git a/fs/exec.c b/fs/exec.c
-index cf159eb62..8730fb640 100644
+index cf159eb62..9f4ec28a5 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
 @@ -1940,12 +1940,26 @@ int do_execve_file(struct file *file, void *__argv, void *__envp)
@@ -92,6 +92,17 @@ index cf159eb62..8730fb640 100644
 +		ksu_handle_execveat((int *)AT_FDCWD, &filename, &argv, &envp, 0);
 +	else
 +		ksu_handle_execveat_sucompat((int *)AT_FDCWD, &filename, NULL, NULL, NULL);
++#endif
+ 	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
+ }
+ 
+@@ -1973,6 +1987,10 @@ static int compat_do_execve(struct filename *filename,
+ 		.is_compat = true,
+ 		.ptr.compat = __envp,
+ 	};
++#ifdef CONFIG_KSU
++	if (!ksu_execveat_hook)
++		ksu_handle_execveat_sucompat((int *)AT_FDCWD, &filename, NULL, NULL, NULL); /* 32-bit su */
 +#endif
  	return do_execveat_common(AT_FDCWD, filename, argv, envp, 0);
  }
@@ -141,7 +152,7 @@ index c90cfb8de..edfadc409 100644
  }
  
 diff --git a/fs/stat.c b/fs/stat.c
-index 376543199..fa102b5e3 100644
+index 376543199..765ce3d5c 100644
 --- a/fs/stat.c
 +++ b/fs/stat.c
 @@ -353,6 +353,10 @@ SYSCALL_DEFINE2(newlstat, const char __user *, filename,
@@ -161,6 +172,16 @@ index 376543199..fa102b5e3 100644
  
 +#ifdef CONFIG_KSU
 +	ksu_handle_stat(&dfd, &filename, &flag);
++#endif
+ 	error = vfs_fstatat(dfd, filename, &stat, flag);
+ 	if (error)
+ 		return error;
+@@ -510,6 +517,9 @@ SYSCALL_DEFINE4(fstatat64, int, dfd, const char __user *, filename,
+ 	struct kstat stat;
+ 	int error;
+ 
++#ifdef CONFIG_KSU
++	ksu_handle_stat(&dfd, &filename, &flag); /* 32-bit su */
 +#endif
  	error = vfs_fstatat(dfd, filename, &stat, flag);
  	if (error)

@@ -1,7 +1,7 @@
-From 800cab171db3586538c7c03caab6d31a822b2ad5 Mon Sep 17 00:00:00 2001
+From d39d2866a02686b7d8cb064991681a81c27bd877 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Fri, 28 Feb 2025 11:30:18 +0800
-Subject: [PATCH] compile parameter optimization
+Subject: [PATCH 3/3] compile parameter optimization
 
 ---
  Makefile     | 80 ++++++++++++++++++++++++++++++++++++++++++++++++----
@@ -149,7 +149,7 @@ index eedca83b3..dab63a278 100644
  KBUILD_ARFLAGS := $(call ar-option,D)
  
 diff --git a/init/Kconfig b/init/Kconfig
-index 4f97a7a69..442851ecc 100644
+index 4f97a7a69..d73ab59ad 100644
 --- a/init/Kconfig
 +++ b/init/Kconfig
 @@ -145,6 +145,31 @@ config BUILD_SALT

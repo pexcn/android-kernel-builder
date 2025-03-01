@@ -1,7 +1,7 @@
-From 19c33654107cf083836def0c544a08ca74423f2c Mon Sep 17 00:00:00 2001
+From 267f1fb6ed1b696145926c327a567ac2477b609b Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Fri, 28 Feb 2025 14:42:03 +0800
-Subject: [PATCH] set zram compress algorithm to lz4
+Subject: [PATCH 2/3] set zram compress algorithm to lz4
 
 ---
  drivers/block/zram/Kconfig    | 2 +-

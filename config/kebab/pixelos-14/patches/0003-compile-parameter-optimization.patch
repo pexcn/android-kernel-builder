@@ -1,7 +1,7 @@
-From 1197e864e56000a3850ba3e4cdff0ad7ccf36577 Mon Sep 17 00:00:00 2001
+From d39d2866a02686b7d8cb064991681a81c27bd877 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Fri, 28 Feb 2025 11:30:18 +0800
-Subject: [PATCH 1/2] compile parameter optimization
+Subject: [PATCH 3/3] compile parameter optimization
 
 ---
  Makefile     | 80 ++++++++++++++++++++++++++++++++++++++++++++++++----
@@ -9,7 +9,7 @@ Subject: [PATCH 1/2] compile parameter optimization
  2 files changed, 100 insertions(+), 5 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 8a3974e1f..941c16af1 100644
+index eedca83b3..dab63a278 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -372,10 +372,10 @@ else
