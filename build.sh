@@ -175,6 +175,15 @@ optimize_config() {
     --disable CONFIG_DEBUG_BUGVERBOSE \
     --disable CONFIG_DEBUG_LIST
 
+  # full lto override
+  if [ "$ENABLE_FULL_LTO" = true ]; then
+    scripts/config --file out/.config \
+      --disable CONFIG_LTO_NONE \
+      --disable CONFIG_THINLTO \
+      --disable CONFIG_LTO_CLANG_THIN \
+      --enable CONFIG_LTO_CLANG_FULL
+  fi
+
   # re-generate kernel config
   make "${MAKE_FLAGS[@]}" savedefconfig
   cp -f out/defconfig arch/arm64/configs/${KERNEL_CONFIG%% *}
