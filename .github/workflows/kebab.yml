@@ -4,11 +4,6 @@ on:
   push:
   workflow_dispatch:
     inputs:
-      dont_patch_kernelsu:
-        description: "Don't patch KernelSU"
-        type: boolean
-        required: true
-        default: false
       disable_optimize:
         description: 'Disable Optimize'
         type: boolean
@@ -30,11 +25,10 @@ jobs:
      image: pexcn/docker-images:bookworm-android
     env:
       TZ: Asia/Taipei
-      DONT_PATCH_KERNELSU: ${{ github.event.inputs.dont_patch_kernelsu }}
       DISABLE_OPTIMIZE: ${{ github.event.inputs.disable_optimize }}
       BUILD_CONFIG: ${{ matrix.CONFIG }}
       DEVICE_CODENAME: kebab
-      # device extras
+      # oneplus extras, this variable will be `export` by the shell.
       BRAND_SHOW_FLAG: oneplus
     strategy:
       fail-fast: false
