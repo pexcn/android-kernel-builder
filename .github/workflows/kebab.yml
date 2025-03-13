@@ -4,11 +4,6 @@ on:
   push:
   workflow_dispatch:
     inputs:
-      disable_optimize:
-        description: 'Disable Optimize'
-        type: boolean
-        required: true
-        default: false
       upload_release:
         description: 'Upload to Releases'
         type: boolean
@@ -25,7 +20,6 @@ jobs:
      image: pexcn/docker-images:bookworm-android
     env:
       TZ: Asia/Taipei
-      DISABLE_OPTIMIZE: ${{ github.event.inputs.disable_optimize }}
       BUILD_CONFIG: ${{ matrix.CONFIG }}
       DEVICE_CODENAME: kebab
       # oneplus extras, this variable will be `export` by the shell.
