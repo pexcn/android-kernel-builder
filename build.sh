@@ -217,7 +217,7 @@ package_kernel() {
   #sed -i '/^PATCH_VBMETA_FLAG=auto;/a NO_MAGISK_CHECK=1;' anykernel.sh
 
   # clean folder
-  rm -rf .git .github README.md
+  rm -rf .git .github modules patch ramdisk LICENSE README.md
   find . -name "placeholder" -delete
 
   # packaging
