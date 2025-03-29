@@ -1,0 +1,59 @@
+name: Xiaomi Pad 6
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      upload_release:
+        description: 'Upload to Releases'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+     image: pexcn/docker-images:bookworm-android
+    env:
+      TZ: Asia/Taipei
+      BUILD_CONFIG: ${{ matrix.CONFIG }}
+      DEVICE_CODENAME: pipa
+    strategy:
+      fail-fast: false
+      matrix:
+        CONFIG:
+          - pixelos-15
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Make build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ccache
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/download
+            /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}/build/kernel/.git
+          key: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-${{ github.sha }}
+          restore-keys: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-
+
+      - name: Build Kernel
+        run: ./build.sh
+
+      - name: Upload to Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel
+          path: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel.zip
+
+      - name: Upload to Releases
+        if: (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release] ')) || github.event.inputs.upload_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.DEVICE_CODENAME }}
+          files: build/${{ env.DEVICE_CODENAME }}-${{ env.BUILD_CONFIG }}-kernel.zip
