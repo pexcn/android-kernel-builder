@@ -1,3 +1,0 @@
-KERNEL_SOURCE=https://github.com/engstk/op8.git
-KERNEL_COMMIT=369b1f2d190d934036875470fcf31a2d3fb4e11b
-KERNEL_CONFIG=blu_spark_defconfig

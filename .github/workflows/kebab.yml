@@ -28,7 +28,6 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG:
-          #- blu-spark-15
           - nameless-14
           - pixelos-14
 
