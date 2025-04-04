@@ -86,7 +86,7 @@ add_kernelsu() {
   cd build/kernel
 
   # integrate kernelsu-next
-  curl -sSL "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s next
+  curl -sSL "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.6
 
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
