@@ -2,5 +2,4 @@ KERNEL_SOURCE=https://github.com/PixelOS-Devices/kernel_xiaomi_sm8250.git
 KERNEL_COMMIT=525f56082903dbe0b23361358d5885018027af8e
 KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config vendor/xiaomi/sm8250-common.config vendor/xiaomi/pipa.config"
 
-# TODO: need test, remove this line if cannot boot.
 ENABLE_FULL_LTO=true
