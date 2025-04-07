@@ -111,10 +111,10 @@ optimize_config() {
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
-  # build `Image*-dtb`
-  scripts/config --file out/.config \
-    --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
-    --enable CONFIG_BUILD_ARM64_DT_OVERLAY
+  ## build `Image*-dtb`
+  #scripts/config --file out/.config \
+  # --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
+  # --enable CONFIG_BUILD_ARM64_DT_OVERLAY
   # enable optimizations
   scripts/config --file out/.config \
     --enable CONFIG_INLINE_OPTIMIZATION \

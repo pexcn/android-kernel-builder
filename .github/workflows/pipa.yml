@@ -26,6 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG:
+          - bloodreaper
           - pixelos-15
 
     steps:
