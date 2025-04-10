@@ -1,0 +1,7 @@
+KERNEL_SOURCE=https://github.com/YumeMichi/kernel_xiaomi_pipa.git
+KERNEL_COMMIT=7870de7fc5846e49f8dd9a80c498a74f53f6e2a8
+KERNEL_CONFIG=vendor/pipa_user_defconfig
+
+DONT_PATCH_KERNELSU=true
+DISABLE_OPTIMIZE=true
+#ENABLE_FULL_LTO=true
