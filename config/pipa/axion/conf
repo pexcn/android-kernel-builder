@@ -1,0 +1,7 @@
+KERNEL_SOURCE=https://github.com/ai94iq/android_kernel_xiaomi_sm8250.git
+KERNEL_COMMIT=37b7c5cbd97e182293cb5f68bab35d460157c858
+KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config vendor/xiaomi/sm8250-common.config vendor/xiaomi/pipa.config"
+
+DONT_PATCH_KERNELSU=true
+DISABLE_OPTIMIZE=true
+#ENABLE_FULL_LTO=true
