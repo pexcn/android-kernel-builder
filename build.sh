@@ -109,30 +109,13 @@ optimize_config() {
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
-  # build `Image*-dtb`
+  # optimize kernel image
   scripts/config --file out/.config \
     --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
-    --enable CONFIG_BUILD_ARM64_DT_OVERLAY
-  # enable optimizations
-  scripts/config --file out/.config \
+    --enable CONFIG_BUILD_ARM64_DT_OVERLAY \
     --enable CONFIG_INLINE_OPTIMIZATION \
     --enable CONFIG_POLLY_CLANG \
     --enable CONFIG_STRIP_ASM_SYMS
-  # enable thin lto
-  scripts/config --file out/.config \
-    --enable CONFIG_LTO \
-    --enable CONFIG_LTO_CLANG \
-    --enable CONFIG_LTO_CLANG_THIN \
-    --disable CONFIG_LTO_CLANG_FULL \
-    --enable CONFIG_THINLTO \
-    --disable CONFIG_LTO_NONE
-  # optimize kernel compression
-  scripts/config --file out/.config \
-    --disable CONFIG_KERNEL_GZIP \
-    --enable CONFIG_KERNEL_LZ4 \
-    --enable CONFIG_HAVE_KERNEL_LZ4 \
-    --enable CONFIG_RD_LZ4 \
-    --enable CONFIG_CRYPTO_LZ4
   # optimize network scheduler
   scripts/config --file out/.config \
     --enable CONFIG_NET_SCH_FQ_CODEL \
@@ -173,7 +156,14 @@ optimize_config() {
     --disable CONFIG_DEBUG_BUGVERBOSE \
     --disable CONFIG_DEBUG_LIST
 
-  # full lto override
+  # enable clang lto
+  scripts/config --file out/.config \
+    --enable CONFIG_LTO \
+    --enable CONFIG_LTO_CLANG \
+    --enable CONFIG_LTO_CLANG_THIN \
+    --disable CONFIG_LTO_CLANG_FULL \
+    --enable CONFIG_THINLTO \
+    --disable CONFIG_LTO_NONE
   if [ "$ENABLE_FULL_LTO" = true ]; then
     scripts/config --file out/.config \
       --disable CONFIG_LTO_NONE \
@@ -207,15 +197,17 @@ package_kernel() {
 
   # update properties
   sed -i "s/ExampleKernel/\u${BUILD_CONFIG} Kernel for ${GITHUB_WORKFLOW}/; s/by osm0sis @ xda-developers/by ${GITHUB_REPOSITORY_OWNER:-pexcn} @ GitHub/" anykernel.sh
-  [ "$DISABLE_DEVICE_CHECK" != true ] || sed -i 's/do.devicecheck=1/do.devicecheck=0/g' anykernel.sh
   sed -i '/device.name[1-4]/d' anykernel.sh
   sed -i 's/device.name5=/device.name1='"$DEVICE_CODENAME"'/g' anykernel.sh
   sed -i 's|BLOCK=/dev/block/platform/omap/omap_hsmmc.0/by-name/boot;|BLOCK=auto;|g' anykernel.sh
   sed -i 's/IS_SLOT_DEVICE=0;/IS_SLOT_DEVICE=auto;/g' anykernel.sh
+  if [ "$DISABLE_DEVICE_CHECK" = true ]; then
+    sed -i 's/do.devicecheck=1/do.devicecheck=0/g' anykernel.sh
+  fi
 
   # clean folder
   rm -rf .git .github modules patch ramdisk LICENSE README.md
-  find . -name "placeholder" -delete
+  #find . -name "placeholder" -delete
 
   # packaging
   if ! cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image*-dtb .; then
