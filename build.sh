@@ -132,6 +132,7 @@ optimize_config() {
     --set-str CONFIG_DEFAULT_TCP_CONG "westwood"
   # disable unused features
   scripts/config --file out/.config \
+    --disable CONFIG_KSU_SUSFS \
     --disable CONFIG_CAN \
     --disable CONFIG_MMC \
     --disable CONFIG_FTRACE \
