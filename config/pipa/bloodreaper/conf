@@ -1,12 +1,9 @@
 KERNEL_SOURCE=https://github.com/Matrixx-Devices/android_kernel_xiaomi_pipa.git
-KERNEL_COMMIT=e47c7bb5896b84a6341e65b6fb6497c57794a8ce
+KERNEL_COMMIT=5c9c2cc21e543688655ff7adf27514d0ce3af265
 KERNEL_CONFIG=pipa_aosp_defconfig
+
+ENABLE_FULL_LTO=true
+DONT_APPEND_DTB=true
 
 # kernelsu is built-in in kernel source
 DONT_PATCH_KERNELSU=true
-
-# TODO: don't enable full lto now, waiting fix.
-#ENABLE_FULL_LTO=true
-
-# TODO: cannot be enable, otherwise will stuck on first screen, waiting upstream fix?
-DONT_APPEND_DTB=true
