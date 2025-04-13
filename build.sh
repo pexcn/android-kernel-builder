@@ -172,6 +172,12 @@ optimize_config() {
       --enable CONFIG_LTO_CLANG_FULL
   fi
 
+  # whether to disable append dtb
+  if [ "$DONT_APPEND_DTB" = true ]; then
+    scripts/config --file out/.config \
+      --disable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE
+  fi
+
   # re-generate kernel config
   make "${MAKE_FLAGS[@]}" savedefconfig
   cp -f out/defconfig arch/arm64/configs/${KERNEL_CONFIG%% *}
