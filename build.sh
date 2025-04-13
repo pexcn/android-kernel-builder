@@ -104,8 +104,6 @@ add_kernelsu() {
 }
 
 optimize_config() {
-  [ "$DISABLE_OPTIMIZE" != true ] || return 0
-
   cd build/kernel
 
   # prepare .config
