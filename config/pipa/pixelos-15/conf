@@ -3,3 +3,6 @@ KERNEL_COMMIT=525f56082903dbe0b23361358d5885018027af8e
 KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config vendor/xiaomi/sm8250-common.config vendor/xiaomi/pipa.config"
 
 ENABLE_FULL_LTO=true
+
+# TODO: wait me test...
+DONT_APPEND_DTB=true
