@@ -1,0 +1,71 @@
+From cdd7c3c3f4ed6be14663b08992d2450c065dfb0d Mon Sep 17 00:00:00 2001
+From: pexcn <pexcn97@gmail.com>
+Date: Mon, 14 Apr 2025 11:31:31 +0800
+Subject: [PATCH] arm64: generate a single final dtb
+
+---
+ arch/arm64/Makefile        | 7 +++++++
+ arch/arm64/boot/.gitignore | 1 +
+ arch/arm64/boot/Makefile   | 5 ++++-
+ 3 files changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 1ff1e3296..48217ef2e 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -150,6 +150,8 @@ KBUILD_DTBS	:= dtbs
+ 
+ KBUILD_DTBO_IMG := dtbo.img
+ 
++KBUILD_DTB_IMG := dtb
++
+ ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
+ export DTC_FLAGS := -@
+ endif
+@@ -189,6 +191,11 @@ $(KBUILD_DTBO_IMG): dtbs
+ all: $(KBUILD_DTBO_IMG)
+ endif
+ 
++$(KBUILD_DTB_IMG): dtbs
++	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
++
++all: $(KBUILD_DTB_IMG)
++
+ PHONY += vdso_install
+ vdso_install:
+ 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso $@
+diff --git a/arch/arm64/boot/.gitignore b/arch/arm64/boot/.gitignore
+index 08375ead9..5555081fc 100644
+--- a/arch/arm64/boot/.gitignore
++++ b/arch/arm64/boot/.gitignore
+@@ -3,3 +3,4 @@ Image-dtb
+ Image.gz
+ Image.gz-dtb
+ dtbo.img
++dtb
+diff --git a/arch/arm64/boot/Makefile b/arch/arm64/boot/Makefile
+index 7e1ba2afb..a24785251 100644
+--- a/arch/arm64/boot/Makefile
++++ b/arch/arm64/boot/Makefile
+@@ -18,7 +18,7 @@ include $(srctree)/arch/arm64/boot/dts/Makefile
+ 
+ OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
+ 
+-targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo dtbo.img
++targets := Image Image.bz2 Image.gz Image.lz4 Image.lzma Image.lzo dtbo.img dtb
+ 
+ DTB_NAMES := $(subst $\",,$(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES))
+ ifneq ($(DTB_NAMES),)
+@@ -73,6 +73,9 @@ $(obj)/Image.gz-dtb: $(obj)/Image.gz $(DTB_OBJS) FORCE
+ $(obj)/dtbo.img: $(DTBO_OBJS) FORCE
+ 	$(call if_changed,mkdtimg)
+ 
++$(obj)/dtb: $(DTB_OBJS) FORCE
++	$(call if_changed,cat)
++
+ install:
+ 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
+ 	$(obj)/Image System.map "$(INSTALL_PATH)"
+-- 
+2.39.5
+
