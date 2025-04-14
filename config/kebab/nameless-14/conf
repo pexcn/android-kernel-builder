@@ -1,4 +1,4 @@
-KERNEL_SOURCE=https://github.com/android-kernel-source/android_kernel_oneplus_sm8250.git
+KERNEL_SOURCE=https://github.com/android-kernel-source/android_kernel_oneplus_kebab.git
 KERNEL_COMMIT=1bf98736f627b128421f489f47f05bcea5ee0b40
 KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config"
 
