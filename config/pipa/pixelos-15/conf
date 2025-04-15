@@ -1,8 +1,6 @@
-KERNEL_SOURCE=https://github.com/PixelOS-Devices/kernel_xiaomi_sm8250.git
-KERNEL_COMMIT=525f56082903dbe0b23361358d5885018027af8e
+KERNEL_SOURCE=https://github.com/android-kernel-source/android_kernel_xiaomi_pipa.git
+KERNEL_COMMIT=b1d8ba2f5771891277a734e0a4ed51d1a9286c11
 KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config vendor/xiaomi/sm8250-common.config vendor/xiaomi/pipa.config"
 
 ENABLE_FULL_LTO=true
-
-# TODO: wait me test...
 DONT_APPEND_DTB=true
