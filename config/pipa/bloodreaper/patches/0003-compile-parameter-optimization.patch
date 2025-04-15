@@ -1,0 +1,201 @@
+From 5bbf7fb4deb3b3d36a2bc48657611c41a64da312 Mon Sep 17 00:00:00 2001
+From: pexcn <pexcn97@gmail.com>
+Date: Tue, 15 Apr 2025 14:25:21 +0800
+Subject: [PATCH] compile parameter optimization
+
+ref: https://github.com/kvsnr113/xiaomi_sm8250_kernel/commits/main-new/Makefile
+---
+ Makefile                               | 82 +++++++++++++++++---------
+ arch/arm64/configs/pipa_aosp_defconfig |  2 +-
+ arch/arm64/configs/pipa_defconfig      |  2 +-
+ init/Kconfig                           |  2 +
+ 4 files changed, 57 insertions(+), 31 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index da00fd22f..06e8f14bf 100644
+--- a/Makefile
++++ b/Makefile
+@@ -373,7 +373,7 @@ HOSTCC	= gcc
+ HOSTCXX	= g++
+ endif
+ KBUILD_HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 \
+-		-fomit-frame-pointer -std=gnu89 $(HOST_LFS_CFLAGS) \
++		-fomit-frame-pointer -std=gnu89 -pipe $(HOST_LFS_CFLAGS) \
+ 		$(HOSTCFLAGS)
+ KBUILD_HOSTCXXFLAGS := -O3 $(HOST_LFS_CFLAGS) $(HOSTCXXFLAGS)
+ KBUILD_HOSTLDFLAGS  := $(HOST_LFS_LDFLAGS) $(HOSTLDFLAGS)
+@@ -447,7 +447,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+ 		   -Werror-implicit-function-declaration \
+ 		   -Werror=return-type -Wno-format-security \
+ 		   -std=gnu89 -Wno-unused-variable -Wno-unused-function \
+-                   -Wno-misleading-indentation
++		   -Wno-misleading-indentation -pipe
+ KBUILD_CPPFLAGS := -D__KERNEL__
+ KBUILD_AFLAGS_KERNEL :=
+ KBUILD_CFLAGS_KERNEL :=
+@@ -691,19 +691,27 @@ KBUILD_CFLAGS   += -Os
+ KBUILD_AFLAGS   += -Os
+ KBUILD_LDFLAGS  += -Os
+ else ifeq ($(cc-name),clang)
+-KBUILD_CFLAGS   += -O3
+-KBUILD_AFLAGS   += -O3
+-KBUILD_LDFLAGS  += -O3 --strip-debug
+-else
+-KBUILD_CFLAGS   += -O2
+-KBUILD_AFLAGS   += -O2
+-KBUILD_LDFLAGS  += -O2 --strip-debug
++KBUILD_CFLAGS   += -mllvm -hot-cold-split=true
++KBUILD_CFLAGS   += -fcf-protection=none -fno-stack-protector
++
++# MLGO
++KBUILD_CFLAGS   += -mllvm -regalloc-enable-advisor=release
++KBUILD_LDFLAGS  += -mllvm -regalloc-enable-advisor=release
++KBUILD_LDFLAGS  += -mllvm -enable-ml-inliner=release
++
++KBUILD_CFLAGS   += -O3 -march=armv8.2-a+lse+crypto+dotprod -mcpu=cortex-a55 --cuda-path=/dev/null
++KBUILD_AFLAGS   += -O3 -march=armv8.2-a+lse+crypto+dotprod -mcpu=cortex-a55
++KBUILD_LDFLAGS  += -O3 --plugin-opt=O3 --strip-debug
++ifeq ($(CONFIG_LD_IS_LLD), y)
++KBUILD_LDFLAGS  += -mllvm -mcpu=cortex-a55
+ endif
++else
++KBUILD_CFLAGS   += -O3 -mcpu=cortex-a76.cortex-a55
++KBUILD_AFLAGS   += -O3 -mcpu=cortex-a76.cortex-a55
++KBUILD_LDFLAGS  += -O3 --strip-debug
+ 
+-# Enable fast FMA optimizations
+-KBUILD_CFLAGS += -ffp-contract=fast
+-# Enable hot cold split optimization
+-KBUILD_CFLAGS += -mllvm -hot-cold-split=true
++KBUILD_CFLAGS   += -fcf-protection=none -fno-stack-protector
++endif
+ 
+ ifdef CONFIG_CC_WERROR
+ KBUILD_CFLAGS  += -Werror
+@@ -726,28 +734,47 @@ KBUILD_CFLAGS += $(call cc-option,-fno-reorder-blocks,) \
+                  $(call cc-option,-fno-partial-inlining)
+ endif
+ 
+-ifdef CONFIG_LLVM_POLLY
++ifdef CONFIG_POLLY_CLANG
+ KBUILD_CFLAGS	+= -mllvm -polly \
+ 		   -mllvm -polly-ast-use-context \
++		   -mllvm -polly-detect-keep-going \
+ 		   -mllvm -polly-invariant-load-hoisting \
+-                   -mllvm -polly-loopfusion-greedy=1 \
+-                   -mllvm -polly-reschedule=1 \
+-                   -mllvm -polly-postopts=1 \
+ 		   -mllvm -polly-run-inliner \
+ 		   -mllvm -polly-vectorizer=stripmine
++ifeq ($(shell test $(CONFIG_CLANG_VERSION) -gt 130000; echo $$?),0)
++KBUILD_CFLAGS	+= -mllvm -polly-loopfusion-greedy=1 \
++		   -mllvm -polly-reschedule=1 \
++		   -mllvm -polly-postopts=1 \
++		   -mllvm -polly-num-threads=0 \
++		   -mllvm -polly-omp-backend=LLVM \
++		   -mllvm -polly-scheduling=dynamic \
++		   -mllvm -polly-scheduling-chunksize=1
++else
++KBUILD_CFLAGS	+= -mllvm -polly-opt-fusion=max
++endif
+ # Polly may optimise loops with dead paths beyound what the linker
+-# # can understand. This may negate the effect of the linker's DCE
+-# # so we tell Polly to perfom proven DCE on the loops it optimises
+-# # in order to preserve the overall effect of the linker's DCE.
++# can understand. This may negate the effect of the linker's DCE
++# so we tell Polly to perfom proven DCE on the loops it optimises
++# in order to preserve the overall effect of the linker's DCE.
+ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
+ KBUILD_CFLAGS	+= -mllvm -polly-run-dce
+ endif
+-OPT_FLAGS	+= $(POLLY_FLAGS)
+-KBUILD_LDFLAGS	+= $(POLLY_FLAGS)
+ endif
+ ifdef CONFIG_INLINE_OPTIMIZATION
+-KBUILD_CFLAGS	+= -mllvm -inline-threshold=600
+-KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=750
++ifdef CONFIG_CC_IS_CLANG
++KBUILD_CFLAGS	+= -mllvm -inline-threshold=2500
++KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=2000
++KBUILD_CFLAGS	+= -mllvm -unroll-threshold=1200
++else ifdef CONFIG_CC_IS_GCC
++KBUILD_CFLAGS	+= --param max-inline-insns-single=600
++KBUILD_CFLAGS	+= --param max-inline-insns-auto=750
++
++# We limit inlining to 5KB on the stack.
++KBUILD_CFLAGS	+= --param large-stack-frame=12288
++
++KBUILD_CFLAGS	+= --param inline-min-speedup=5
++KBUILD_CFLAGS	+= --param inline-unit-growth=60
++endif
+ endif
+ 
+ ifneq ($(CONFIG_FRAME_WARN),0)
+@@ -929,16 +956,13 @@ endif
+ 
+ ifdef CONFIG_LTO_CLANG
+ ifdef CONFIG_LTO_CLANG_THIN
+-CC_FLAGS_LTO	+= -flto=thin -fsplit-lto-unit
+-KBUILD_LDFLAGS	+= --thinlto-cache-dir=.thinlto-cache
++CC_FLAGS_LTO	+= -flto=thin -fsplit-lto-unit -funified-lto
++KBUILD_LDFLAGS	+= --thinlto-jobs=$(nproc --all)
+ else
+ CC_FLAGS_LTO	+= -flto
+ endif
+ CC_FLAGS_LTO	+= -fvisibility=hidden
+ 
+-# Limit inlining across translation units to reduce binary size
+-KBUILD_LDFLAGS += -mllvm -import-instr-limit=5
+-
+ # Check for frame size exceeding threshold during prolog/epilog insertion.
+ ifneq ($(CONFIG_FRAME_WARN),0)
+ KBUILD_LDFLAGS	+= -plugin-opt=-warn-stack-size=$(CONFIG_FRAME_WARN)
+diff --git a/arch/arm64/configs/pipa_aosp_defconfig b/arch/arm64/configs/pipa_aosp_defconfig
+index 722740002..150afa3a1 100644
+--- a/arch/arm64/configs/pipa_aosp_defconfig
++++ b/arch/arm64/configs/pipa_aosp_defconfig
+@@ -803,7 +803,7 @@ CONFIG_OVERLAY_FS_REDIRECT_DIR=y
+ CONFIG_OVERLAY_FS_INDEX=y
+ CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
+ # LLVM
+-CONFIG_LLVM_POLLY=y
++CONFIG_POLLY_CLANG=y
+ CONFIG_INLINE_OPTIMIZATION=y
+ CONFIG_LTO=y
+ CONFIG_LTO_CLANG=y
+diff --git a/arch/arm64/configs/pipa_defconfig b/arch/arm64/configs/pipa_defconfig
+index 016138917..fc19054d4 100644
+--- a/arch/arm64/configs/pipa_defconfig
++++ b/arch/arm64/configs/pipa_defconfig
+@@ -793,7 +793,7 @@ CONFIG_OVERLAY_FS_REDIRECT_DIR=y
+ CONFIG_OVERLAY_FS_INDEX=y
+ CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y
+ # LLVM
+-CONFIG_LLVM_POLLY=y
++CONFIG_POLLY_CLANG=y
+ CONFIG_INLINE_OPTIMIZATION=y
+ # CONFIG_THINLTO is not set
+ CONFIG_LTO_CLANG=y
+diff --git a/init/Kconfig b/init/Kconfig
+index db84b0470..1b533487e 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -163,6 +163,7 @@ config BUILD_SALT
+ 
+ config POLLY_CLANG
+ 	bool "Use Clang Polly optimizations"
++	default y
+ 	help
+ 	  This option enables Clang's polyhedral loop optimizer known as
+ 	  Polly. Polly is able to optimize various loops throughout the
+@@ -174,6 +175,7 @@ config POLLY_CLANG
+ 
+ config INLINE_OPTIMIZATION
+ 	bool "Use Clang Inline optimizations"
++	default y
+ 	help
+ 	  Increased inlining can provide an improvement in performance, but also
+ 	  increases the size of the final kernel image. This config peovides a bit
+-- 
+2.49.0
+
