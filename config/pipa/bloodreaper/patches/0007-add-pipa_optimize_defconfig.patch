@@ -1,4 +1,4 @@
-From a324c74992020ea996723e1437298284c824c959 Mon Sep 17 00:00:00 2001
+From 1a34386a460b3b2d4e7328b9cc95b5905b638e3a Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Wed, 16 Apr 2025 10:48:04 +0800
 Subject: [PATCH 3/3] add pipa_optimize_defconfig
@@ -14,7 +14,7 @@ Signed-off-by: pexcn <pexcn97@gmail.com>
 
 diff --git a/arch/arm64/configs/pipa_optimize_defconfig b/arch/arm64/configs/pipa_optimize_defconfig
 new file mode 100644
-index 000000000..6f8a8816d
+index 000000000..c2d4f3c8a
 --- /dev/null
 +++ b/arch/arm64/configs/pipa_optimize_defconfig
 @@ -0,0 +1,5955 @@
@@ -5878,7 +5878,7 @@ index 000000000..6f8a8816d
 +CONFIG_FRAME_POINTER=y
 +CONFIG_MAGIC_SYSRQ=y
 +CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x1
-+# CONFIG_MAGIC_SYSRQ_SERIAL is not set
++CONFIG_MAGIC_SYSRQ_SERIAL=y
 +# CONFIG_DEBUG_KERNEL is not set
 +
 +#
