@@ -1,4 +1,4 @@
-From 417f0003a62c3443a4692b93a088a82d697c7b95 Mon Sep 17 00:00:00 2001
+From a324c74992020ea996723e1437298284c824c959 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Wed, 16 Apr 2025 10:48:04 +0800
 Subject: [PATCH 3/3] add pipa_optimize_defconfig
@@ -8,16 +8,16 @@ version: aff08a585a0510f9cdbaedf70d7cd192f9f60c63
 
 Signed-off-by: pexcn <pexcn97@gmail.com>
 ---
- arch/arm64/configs/pipa_optimize_defconfig | 5954 ++++++++++++++++++++
- 1 file changed, 5954 insertions(+)
+ arch/arm64/configs/pipa_optimize_defconfig | 5955 ++++++++++++++++++++
+ 1 file changed, 5955 insertions(+)
  create mode 100644 arch/arm64/configs/pipa_optimize_defconfig
 
 diff --git a/arch/arm64/configs/pipa_optimize_defconfig b/arch/arm64/configs/pipa_optimize_defconfig
 new file mode 100644
-index 000000000..3872e0d81
+index 000000000..6f8a8816d
 --- /dev/null
 +++ b/arch/arm64/configs/pipa_optimize_defconfig
-@@ -0,0 +1,5954 @@
+@@ -0,0 +1,5955 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
 +# Linux/arm64 4.19.331 Kernel Configuration
@@ -4703,7 +4703,8 @@ index 000000000..3872e0d81
 +# CONFIG_MSM_SPM is not set
 +# CONFIG_MSM_L2_SPM is not set
 +# CONFIG_QCOM_EARLY_RANDOM is not set
-+# CONFIG_QCOM_MEMORY_DUMP_V2 is not set
++CONFIG_QCOM_MEMORY_DUMP_V2=y
++# CONFIG_MSM_DEBUG_LAR_UNLOCK is not set
 +CONFIG_QCOM_SMEM_STATE=y
 +CONFIG_QCOM_SMP2P=y
 +# CONFIG_QCOM_SMSM is not set
