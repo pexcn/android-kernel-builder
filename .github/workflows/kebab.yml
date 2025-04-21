@@ -28,6 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         CONFIG:
+          - crdroid
           - nameless-14
           - pixelos-14
 
