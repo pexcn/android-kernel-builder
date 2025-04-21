@@ -113,6 +113,7 @@ optimize_config() {
   scripts/config --file out/.config \
     --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
     --enable CONFIG_BUILD_ARM64_DT_OVERLAY \
+    --enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION \
     --enable CONFIG_INLINE_OPTIMIZATION \
     --enable CONFIG_POLLY_CLANG \
     --enable CONFIG_STRIP_ASM_SYMS \
