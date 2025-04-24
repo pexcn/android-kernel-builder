@@ -1,0 +1,117 @@
+From d765e1acf2c165834f052076aa4279915d0af3b4 Mon Sep 17 00:00:00 2001
+From: pexcn <pexcn97@gmail.com>
+Date: Thu, 24 Apr 2025 09:42:41 +0800
+Subject: [PATCH] power: smb5-lib: implement bypass charging
+
+ref: https://github.com/diphons/kernel_xiaomi_sm8250/commit/951ec10fa843def5f5819cb22c843b410a8e0c9f
+Signed-off-by: pexcn <pexcn97@gmail.com>
+---
+ drivers/power/supply/qcom/smb5-lib-munch.c | 39 +++++++++++++++++++---
+ drivers/power/supply/qcom/smb5-lib-munch.h |  1 +
+ 2 files changed, 35 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/power/supply/qcom/smb5-lib-munch.c b/drivers/power/supply/qcom/smb5-lib-munch.c
+index c7fcadd..a3d91a3 100644
+--- a/drivers/power/supply/qcom/smb5-lib-munch.c
++++ b/drivers/power/supply/qcom/smb5-lib-munch.c
+@@ -37,6 +37,7 @@
+ 
+ bool off_charge_flag;
+ static bool first_boot_flag;
++static int bypass_charging = 0;
+ 
+ static void update_sw_icl_max(struct smb_charger *chg, int pst);
+ static int smblib_get_prop_typec_mode(struct smb_charger *chg);
+@@ -2395,9 +2396,14 @@ int smblib_vbus_regulator_is_enabled(struct regulator_dev *rdev)
+ int smblib_get_prop_input_suspend(struct smb_charger *chg,
+ 				  union power_supply_propval *val)
+ {
+-	val->intval
+-		= (get_client_vote(chg->usb_icl_votable, USER_VOTER) == 0)
+-		 || get_client_vote(chg->dc_suspend_votable, USER_VOTER);
++	if ((get_client_vote(chg->chg_disable_votable, BYPASS_VOTER) == 1)) {
++		val->intval = 1;
++	} else if (bypass_charging) {
++		val->intval = 2;
++	} else {
++		val->intval = 0;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -3164,20 +3170,37 @@ int smblib_set_prop_input_suspend(struct smb_charger *chg,
+ 	int rc = 0;
+ 
+ 	/* vote 0mA when suspended */
+-	rc = vote(chg->usb_icl_votable, USER_VOTER, (bool)val->intval, 0);
++	rc = vote(chg->usb_icl_votable, USER_VOTER, false, 0);
+ 	if (rc < 0) {
+ 		smblib_err(chg, "Couldn't vote to %s USB rc=%d\n",
+ 			(bool)val->intval ? "suspend" : "resume", rc);
+ 		return rc;
+ 	}
+ 
+-	rc = vote(chg->dc_suspend_votable, USER_VOTER, (bool)val->intval, 0);
++	rc = vote(chg->dc_suspend_votable, USER_VOTER, false, 0);
+ 	if (rc < 0) {
+ 		smblib_err(chg, "Couldn't vote to %s DC rc=%d\n",
+ 			(bool)val->intval ? "suspend" : "resume", rc);
+ 		return rc;
+ 	}
+ 
++	if (val->intval == 1) {
++		rc = vote(chg->chg_disable_votable, BYPASS_VOTER, 1, 0);
++		bypass_charging = 0;
++	} else if (val->intval == 2) {
++		rc = vote(chg->chg_disable_votable, BYPASS_VOTER, 0, 0);
++		bypass_charging = 1;
++	} else {
++		rc = vote(chg->chg_disable_votable, BYPASS_VOTER, 0, 0);
++		bypass_charging = 0;
++	}
++
++	if (rc < 0) {
++		smblib_err(chg, "Couldn't vote to %d input_suspend rc=%d\n",
++			val->intval, rc);
++		return rc;
++	}
++
+ 	power_supply_changed(chg->batt_psy);
+ 	return rc;
+ }
+@@ -3577,6 +3600,9 @@ static void smblib_thermal_setting_work(struct work_struct *work)
+ 	struct smb_charger *chg = container_of(work, struct smb_charger,
+ 			thermal_setting_work.work);
+ 
++	if (bypass_charging)
++		chg->pps_thermal_level = 0;
++
+ 	if (chg->pps_thermal_level > chg->system_temp_level) {
+ 		if (chg->pps_thermal_level - chg->system_temp_level >= 2)
+ 			chg->pps_thermal_level -= 2;
+@@ -3639,6 +3665,9 @@ int smblib_set_prop_system_temp_level(struct smb_charger *chg,
+ 	vote(chg->chg_disable_votable, THERMAL_DAEMON_VOTER, false, 0);
+ #endif
+ 
++	if (bypass_charging)
++		chg->system_temp_level = 0;
++
+ 	if (chg->pd_active == POWER_SUPPLY_PD_PPS_ACTIVE)
+ 		schedule_delayed_work(&chg->thermal_setting_work, 3 * HZ);
+ 	else
+diff --git a/drivers/power/supply/qcom/smb5-lib-munch.h b/drivers/power/supply/qcom/smb5-lib-munch.h
+index 4a6bdfb..6dadc63 100644
+--- a/drivers/power/supply/qcom/smb5-lib-munch.h
++++ b/drivers/power/supply/qcom/smb5-lib-munch.h
+@@ -101,6 +101,7 @@ enum print_reason {
+ #define BBC_CHARGER_VOTER		"BBC_CHARGER_VOTER"
+ #define QC2_UNSUPPORTED_VOTER		"QC2_UNSUPPORTED_VOTER"
+ #define THERMAL_FCC_OVERRIDE_VOTER  "THERMAL_FCC_OVERRIDE_VOTER"
++#define BYPASS_VOTER			"BYPASS_VOTER"
+ /* use for QC3P5 */
+ #define QC3P5_VOTER			"QC3P5_VOTER"
+ #define FCC_MAX_QC3P5_VOTER		"FCC_MAX_QC3P5_VOTER"
+-- 
+2.45.2
+
