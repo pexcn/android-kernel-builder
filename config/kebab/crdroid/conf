@@ -1,7 +1,0 @@
-KERNEL_SOURCE=https://github.com/crdroidandroid/android_kernel_oneplus_sm8250.git
-KERNEL_COMMIT=d9536f137bdb1ccd2cda6921ef744c8821e49dba
-KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config"
-
-# orangefox recovery is universal for OnePlus 8 series
-# https://github.com/Wishmasterflo/device_oneplus_opkona/releases
-DISABLE_DEVICE_CHECK=true
