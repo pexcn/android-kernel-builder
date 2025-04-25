@@ -1,5 +1,5 @@
 KERNEL_SOURCE=https://github.com/android-kernel-source/android_kernel_oneplus_kebab.git
-KERNEL_COMMIT=a5eac7d5a655205a21bb9cb84106054bb1dd88e4
+KERNEL_COMMIT=48dc6e1d0385c7c53671d83216e94645ad380847
 KERNEL_CONFIG="vendor/kona-perf_defconfig vendor/debugfs.config"
 
 # orangefox recovery is universal for OnePlus 8 series
