@@ -27,7 +27,6 @@ jobs:
       matrix:
         CONFIG:
           - bloodreaper
-          #- pixelos-15
 
     steps:
       - name: Checkout sources
