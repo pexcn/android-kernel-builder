@@ -1,6 +1,6 @@
-From 76c33888a71ac68fbd7be9725c8023c65b0dc063 Mon Sep 17 00:00:00 2001
+From 168a9ae5af048da0a139a448222702a768d4dffe Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
-Date: Fri, 2 May 2025 22:39:34 +0800
+Date: Sat, 3 May 2025 20:50:29 +0800
 Subject: [PATCH] compile parameter optimization
 
 patch to: https://github.com/Matrixx-Devices/android_kernel_xiaomi_pipa/blob/6c90d7912a1b401f268a1a14de18ac461e34f185/Makefile
@@ -8,11 +8,11 @@ based on: https://github.com/kvsnr113/xiaomi_sm8250_kernel/blob/86f714ab4af041ee
 
 Signed-off-by: pexcn <pexcn97@gmail.com>
 ---
- Makefile | 87 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 34 deletions(-)
+ Makefile | 83 ++++++++++++++++++++++++++++++++++----------------------
+ 1 file changed, 51 insertions(+), 32 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index 867e08f..277ad5e 100644
+index cf5b297..96a5229 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -373,7 +373,7 @@ HOSTCC	= gcc
@@ -134,16 +134,7 @@ index 867e08f..277ad5e 100644
  ifneq ($(CROSS_COMPILE),)
  CLANG_TRIPLE	?= $(CROSS_COMPILE)
  CLANG_TARGET	:= --target=$(notdir $(CLANG_TRIPLE:%-=%))
-@@ -943,15 +960,17 @@ endif
- 
- ifdef CONFIG_LTO_CLANG
- ifdef CONFIG_LTO_CLANG_THIN
--CC_FLAGS_LTO	+= -flto=thin -fsplit-lto-unit
--KBUILD_LDFLAGS	+= --thinlto-cache-dir=.thinlto-cache
-+CC_FLAGS_LTO	+= -flto=thin -fsplit-lto-unit -funified-lto
-+KBUILD_LDFLAGS	+= --thinlto-jobs=$(nproc --all)
- else
- CC_FLAGS_LTO	+= -flto
+@@ -950,8 +967,10 @@ CC_FLAGS_LTO	+= -flto
  endif
  CC_FLAGS_LTO	+= -fvisibility=hidden
  
