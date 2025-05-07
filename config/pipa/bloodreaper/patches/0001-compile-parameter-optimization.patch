@@ -1,7 +1,7 @@
-From 168a9ae5af048da0a139a448222702a768d4dffe Mon Sep 17 00:00:00 2001
+From 67dd411265c78b160d33887bddce4021f682a2d5 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Sat, 3 May 2025 20:50:29 +0800
-Subject: [PATCH] compile parameter optimization
+Subject: [PATCH 1/2] compile parameter optimization
 
 patch to: https://github.com/Matrixx-Devices/android_kernel_xiaomi_pipa/blob/6c90d7912a1b401f268a1a14de18ac461e34f185/Makefile
 based on: https://github.com/kvsnr113/xiaomi_sm8250_kernel/blob/86f714ab4af041ee582c60665ea59a0de7774635/Makefile
@@ -12,7 +12,7 @@ Signed-off-by: pexcn <pexcn97@gmail.com>
  1 file changed, 51 insertions(+), 32 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index cf5b297..96a5229 100644
+index bb7c86758..6f4da01bd 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -373,7 +373,7 @@ HOSTCC	= gcc
@@ -147,5 +147,5 @@ index cf5b297..96a5229 100644
  # Check for frame size exceeding threshold during prolog/epilog insertion.
  ifneq ($(CONFIG_FRAME_WARN),0)
 -- 
-2.46.0
+2.39.5
 
