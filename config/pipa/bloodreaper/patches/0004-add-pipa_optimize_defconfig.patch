@@ -1,7 +1,7 @@
-From 8b90f824eba22708a507cae89fbd19552677e5d1 Mon Sep 17 00:00:00 2001
+From 54f740b839d276beae087e346f124e428d6eb162 Mon Sep 17 00:00:00 2001
 From: pexcn <pexcn97@gmail.com>
 Date: Wed, 7 May 2025 10:25:17 +0800
-Subject: [PATCH 2/2] add pipa_optimize_defconfig
+Subject: [PATCH 4/4] add pipa_optimize_defconfig
 
 based on arch/arm64/configs/pipa_defconfig
 
@@ -16,16 +16,16 @@ apply optimize_config(), and disable:
 
 Signed-off-by: pexcn <pexcn97@gmail.com>
 ---
- arch/arm64/configs/pipa_optimize_defconfig | 5921 ++++++++++++++++++++
- 1 file changed, 5921 insertions(+)
+ arch/arm64/configs/pipa_optimize_defconfig | 5908 ++++++++++++++++++++
+ 1 file changed, 5908 insertions(+)
  create mode 100644 arch/arm64/configs/pipa_optimize_defconfig
 
 diff --git a/arch/arm64/configs/pipa_optimize_defconfig b/arch/arm64/configs/pipa_optimize_defconfig
 new file mode 100644
-index 000000000..af4dc05d3
+index 0000000000..84f031eab6
 --- /dev/null
 +++ b/arch/arm64/configs/pipa_optimize_defconfig
-@@ -0,0 +1,5921 @@
+@@ -0,0 +1,5908 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
 +# Linux/arm64 4.19.331 Kernel Configuration
@@ -4775,7 +4775,7 @@ index 000000000..af4dc05d3
 +CONFIG_DEVFREQ_BOOST=y
 +CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS=58
 +CONFIG_DEVFREQ_WAKE_BOOST_DURATION_MS=1000
-+CONFIG_DEVFREQ_CPU_LLCC_DDR_BW_BOOST_FREQ=2200
++CONFIG_DEVFREQ_CPU_LLCC_DDR_BW_BOOST_FREQ=2597
 +# CONFIG_PM_DEVFREQ_EVENT is not set
 +CONFIG_EXTCON=y
 +
@@ -5252,19 +5252,6 @@ index 000000000..af4dc05d3
 +# Xiaomi MIUI additions
 +#
 +# CONFIG_XIAOMI_MIUI is not set
-+
-+#
-+# KernelSU
-+#
-+CONFIG_KSU=y
-+# CONFIG_KSU_DEBUG is not set
-+# CONFIG_KSU_ALLOWLIST_WORKAROUND is not set
-+
-+#
-+# KernelSU - SUSFS
-+#
-+# CONFIG_KSU_SUSFS is not set
-+CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y
 +
 +#
 +# File systems

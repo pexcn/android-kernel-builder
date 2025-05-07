@@ -4,6 +4,3 @@ KERNEL_CONFIG=pipa_optimize_defconfig
 
 ENABLE_FULL_LTO=true
 DONT_APPEND_DTB=true
-
-# kernelsu is built-in in kernel source
-DONT_PATCH_KERNELSU=true
