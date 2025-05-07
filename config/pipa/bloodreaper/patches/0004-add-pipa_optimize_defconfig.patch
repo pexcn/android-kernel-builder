@@ -5,7 +5,8 @@ Subject: [PATCH 4/4] add pipa_optimize_defconfig
 
 based on arch/arm64/configs/pipa_defconfig
 
-apply optimize_config(), and disable:
+apply optimize_config(),
+and disable:
   - CONFIG_L2TP
   - CONFIG_BLK_DEV_RAM
   - CONFIG_VIRTIO_MENU
@@ -13,6 +14,8 @@ apply optimize_config(), and disable:
   - CONFIG_F2FS_STAT_FS
   - CONFIG_F2FS_IOSTAT
   - CONFIG_RUNTIME_TESTING_MENU
+and set:
+  - CONFIG_DEVFREQ_CPU_LLCC_DDR_BW_BOOST_FREQ=2597
 
 Signed-off-by: pexcn <pexcn97@gmail.com>
 ---

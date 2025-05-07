@@ -3,6 +3,17 @@ From: pexcn <pexcn97@gmail.com>
 Date: Wed, 7 May 2025 11:16:58 +0800
 Subject: [PATCH 1/4] drop kernelsu and susfs
 
+reverted commits:
+  - drivers: ksu: Update KernelSU Next Susfs v1.5.7
+  - drivers: update KernelSU Next to v1.0.6
+  - ksu: Supress git version warnings
+  - kernel: patch susfs v1.5.5 and KernelSU-Next v1.0.5
+  - drivers: Import KernelSU-Next ``next-susfs``
+  - ksu_next: Add SUSFS v1.5.4 patch
+  - drivers: Add KernelSU-Next and SUS SUSFS support
+  - drivers: Add KernelSU hooks
+  - Add KernelSU-Next and SUSFS support
+
 Signed-off-by: pexcn <pexcn97@gmail.com>
 ---
  drivers/Kconfig                     |    2 -
