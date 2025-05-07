@@ -137,8 +137,11 @@ optimize_config() {
     --disable CONFIG_KSU_SUSFS \
     --disable CONFIG_BLK_DEV_RAM \
     --disable CONFIG_ZRAM_WRITEBACK \
+    --disable CONFIG_F2FS_STAT_FS \
+    --disable CONFIG_F2FS_IOSTAT \
     --disable CONFIG_CAN \
     --disable CONFIG_MMC \
+    --disable CONFIG_STM \
     --disable CONFIG_FTRACE \
     --disable CONFIG_SVELTE \
     --disable CONFIG_IOMONITOR
