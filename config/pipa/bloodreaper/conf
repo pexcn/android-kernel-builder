@@ -2,4 +2,5 @@ KERNEL_SOURCE=https://github.com/Matrixx-Devices/android_kernel_xiaomi_pipa.git
 KERNEL_COMMIT=6f989e21329d24b59b5892a6845085add71bed80
 KERNEL_CONFIG=pipa_optimize_defconfig
 
+# this kernel support compile with full lto
 ENABLE_FULL_LTO=true
