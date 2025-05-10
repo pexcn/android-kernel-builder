@@ -2,11 +2,14 @@ KERNEL_SOURCE=https://github.com/kvsnr113/xiaomi_sm8250_kernel.git
 KERNEL_COMMIT=05b9523246985ed6eaf4861811d887a70a375049
 KERNEL_CONFIG=vendor/munch_defconfig
 
-# kernelsu is built-in in kernel source
+# kernelsu was built-in in kernel source
 DONT_PATCH_KERNELSU=true
 
 # this kernel support compile with full lto
 ENABLE_FULL_LTO=true
+
+# disable `do.devicecheck` for anykernel3
+#DISABLE_DEVICE_CHECK=true
 
 # this device have vendor_boot partition
 HAVE_VENDOR_BOOT=true

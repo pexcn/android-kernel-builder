@@ -2,6 +2,14 @@ KERNEL_SOURCE=https://github.com/android-kernel-source/android_kernel_oneplus_ke
 KERNEL_COMMIT=38133c32a81b87280a613ad5c09cd06a1095b8e3
 KERNEL_CONFIG=kebab_defconfig
 
-# orangefox recovery is universal for OnePlus 8 series
-# https://github.com/Wishmasterflo/device_oneplus_opkona/releases
+# kernelsu was built-in in kernel source
+#DONT_PATCH_KERNELSU=true
+
+# this kernel support compile with full lto
+#ENABLE_FULL_LTO=true
+
+# disable `do.devicecheck` for anykernel3
 DISABLE_DEVICE_CHECK=true
+
+# this device have vendor_boot partition
+#HAVE_VENDOR_BOOT=true
