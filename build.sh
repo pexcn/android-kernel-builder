@@ -158,6 +158,7 @@ optimize_config() {
     --disable CONFIG_SPMI_MSM_PMIC_ARB_DEBUG \
     --disable CONFIG_VIDEO_ADV_DEBUG \
     --disable CONFIG_MSM_DEBUGCC_KONA \
+    --disable CONFIG_NL80211_TESTMODE \
     --disable CONFIG_DEBUG_ALIGN_RODATA \
     --disable CONFIG_DEBUG_KERNEL \
     --disable CONFIG_DEBUG_INFO \
