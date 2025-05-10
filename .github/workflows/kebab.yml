@@ -2,6 +2,10 @@ name: OnePlus 8T
 
 on:
   push:
+    paths:
+      - '.github/workflows/kebab.yml'
+      - 'config/kebab/**'
+      - 'build.sh'
   workflow_dispatch:
     inputs:
       upload_release:

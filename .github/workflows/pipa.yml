@@ -2,6 +2,10 @@ name: Xiaomi Pad 6
 
 on:
   push:
+    paths:
+      - '.github/workflows/pipa.yml'
+      - 'config/pipa/**'
+      - 'build.sh'
   workflow_dispatch:
     inputs:
       upload_release:

@@ -2,6 +2,10 @@ name: Redmi K40S
 
 on:
   push:
+    paths:
+      - '.github/workflows/munch.yml'
+      - 'config/munch/**'
+      - 'build.sh'
   workflow_dispatch:
     inputs:
       upload_release:
