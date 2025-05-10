@@ -63,9 +63,6 @@ get_sources() {
   # checkout version
   git checkout $KERNEL_COMMIT || exit 1
 
-  # remove `-dirty` of version
-  sed -i 's/ -dirty//g' scripts/setlocalversion
-
   cd -
 }
 
@@ -77,6 +74,10 @@ patch_kernel() {
     echo "Applying $(basename $patch)."
     git apply $patch || exit 2
   done
+
+  # remove `-dirty` even if there are uncommitted changes
+  sed -i 's/ -dirty//g' scripts/setlocalversion
+
   cd -
 }
 
@@ -109,15 +110,17 @@ optimize_config() {
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
 
+  # optimize kernel build
+  scripts/config --file out/.config \
+    --set-str CONFIG_LOCALVERSION "-perf" \
+    --disable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
+    --enable CONFIG_BUILD_ARM64_DT_OVERLAY
   # optimize kernel image
   scripts/config --file out/.config \
-    --enable CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
-    --enable CONFIG_BUILD_ARM64_DT_OVERLAY \
     --enable CONFIG_LD_DEAD_CODE_DATA_ELIMINATION \
     --enable CONFIG_INLINE_OPTIMIZATION \
     --enable CONFIG_POLLY_CLANG \
-    --enable CONFIG_STRIP_ASM_SYMS \
-    --set-str CONFIG_LOCALVERSION "-perf"
+    --enable CONFIG_STRIP_ASM_SYMS
   # optimize network scheduler
   scripts/config --file out/.config \
     --enable CONFIG_NET_SCH_FQ_CODEL \
@@ -132,6 +135,12 @@ optimize_config() {
     --enable CONFIG_TCP_CONG_WESTWOOD \
     --enable CONFIG_DEFAULT_WESTWOOD \
     --set-str CONFIG_DEFAULT_TCP_CONG "westwood"
+  # disable unused modules
+  scripts/config --file out/.config \
+    --disable CONFIG_CAN \
+    --disable CONFIG_MMC \
+    --disable CONFIG_STM \
+    --disable CONFIG_FTRACE
   # disable unused features
   scripts/config --file out/.config \
     --disable CONFIG_KSU_SUSFS \
@@ -140,13 +149,7 @@ optimize_config() {
     --disable CONFIG_VIRTIO_MENU \
     --disable CONFIG_RUNTIME_TESTING_MENU \
     --disable CONFIG_F2FS_STAT_FS \
-    --disable CONFIG_F2FS_IOSTAT \
-    --disable CONFIG_CAN \
-    --disable CONFIG_MMC \
-    --disable CONFIG_STM \
-    --disable CONFIG_FTRACE \
-    --disable CONFIG_SVELTE \
-    --disable CONFIG_IOMONITOR
+    --disable CONFIG_F2FS_IOSTAT
   # disable debug options
   scripts/config --file out/.config \
     --disable CONFIG_ALLOW_DEV_COREDUMP \
@@ -155,12 +158,8 @@ optimize_config() {
     --disable CONFIG_SPMI_MSM_PMIC_ARB_DEBUG \
     --disable CONFIG_VIDEO_ADV_DEBUG \
     --disable CONFIG_MSM_DEBUGCC_KONA \
-    --disable CONFIG_DEBUG_KERNEL \
     --disable CONFIG_DEBUG_ALIGN_RODATA \
-    --disable CONFIG_KMALLOC_DEBUG \
-    --disable CONFIG_VMALLOC_DEBUG \
-    --disable CONFIG_DUMP_TASKS_MEM \
-    --disable CONFIG_VSERVICES_LOCK_DEBUG \
+    --disable CONFIG_DEBUG_KERNEL \
     --disable CONFIG_DEBUG_INFO \
     --disable CONFIG_SCHED_DEBUG \
     --disable CONFIG_DEBUG_BUGVERBOSE \
