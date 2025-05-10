@@ -228,6 +228,12 @@ adapt_anykernel3() {
 	flash_boot;
 	EOF
 
+  # flash `dtbo.img` into dtbo partition
+  echo >> anykernel.sh
+  cat <<-EOF >> anykernel.sh
+	flash_dtbo;
+	EOF
+
   # flash `dtb` into vendor_boot partition
   echo >> anykernel.sh
   cat <<-EOF >> anykernel.sh
@@ -238,12 +244,6 @@ adapt_anykernel3() {
 	reset_ak;
 	split_boot;
 	flash_boot;
-	EOF
-
-  # flash `dtbo` into dtbo partition
-  echo >> anykernel.sh
-  cat <<-EOF >> anykernel.sh
-	flash_dtbo;
 	EOF
 
   # clean folder
