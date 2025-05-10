@@ -218,7 +218,7 @@ adapt_anykernel3() {
   # remove unnecessary configs
   sed -i '/^### AnyKernel install/q' anykernel.sh
 
-  # flash `Image` into boot partition
+  # flash `Image`
   cat <<-EOF >> anykernel.sh
 	BLOCK=boot;
 	IS_SLOT_DEVICE=auto;
@@ -229,11 +229,13 @@ adapt_anykernel3() {
 	flash_boot;
 	EOF
 
-  # flash `dtbo.img` into dtbo partition
-  echo >> anykernel.sh
-  cat <<-EOF >> anykernel.sh
-	flash_dtbo;
-	EOF
+  # flash `dtbo.img`
+  if [ -f $CUR_DIR/build/kernel/out/arch/arm64/boot/dtbo.img ]; then
+    echo >> anykernel.sh
+    cat <<-EOF >> anykernel.sh
+		flash_dtbo;
+		EOF
+  fi
 
   # flash `dtb` into vendor_boot partition
   echo >> anykernel.sh
