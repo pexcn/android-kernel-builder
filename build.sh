@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155
+# shellcheck disable=SC1090,SC2086,SC2164,SC2103,SC2155,SC2129
 
 prepare_env() {
   mkdir -p build
@@ -199,12 +199,12 @@ build_kernel() {
   cd -
 }
 
-package_kernel() {
+adapt_anykernel3() {
   git clone https://github.com/osm0sis/AnyKernel3.git -b master --single-branch build/anykernel3
   cd build/anykernel3
   git checkout $AK3_VERSION
 
-  # update properties
+  # adapting anykernel.sh
   sed -i "s/ExampleKernel/\u${BUILD_CONFIG} Kernel for ${GITHUB_WORKFLOW}/; s/by osm0sis @ xda-developers/by ${GITHUB_REPOSITORY_OWNER:-pexcn} @ GitHub/" anykernel.sh
   sed -i '/device.name[1-4]/d' anykernel.sh
   sed -i 's/device.name5=/device.name1='"$DEVICE_CODENAME"'/g' anykernel.sh
@@ -214,11 +214,48 @@ package_kernel() {
     sed -i 's/do.devicecheck=1/do.devicecheck=0/g' anykernel.sh
   fi
 
+  # remove unnecessary configs
+  sed -i '/^### AnyKernel install/q' anykernel.sh
+
+  # flash `Image` into boot partition
+  cat <<-EOF >> anykernel.sh
+	BLOCK=boot;
+	IS_SLOT_DEVICE=auto;
+	RAMDISK_COMPRESSION=auto;
+	PATCH_VBMETA_FLAG=auto;
+	. tools/ak3-core.sh;
+	split_boot;
+	flash_boot;
+	EOF
+
+  # flash `dtb` into vendor_boot partition
+  echo >> anykernel.sh
+  cat <<-EOF >> anykernel.sh
+	BLOCK=vendor_boot;
+	IS_SLOT_DEVICE=auto;
+	RAMDISK_COMPRESSION=auto;
+	PATCH_VBMETA_FLAG=auto;
+	reset_ak;
+	split_boot;
+	flash_boot;
+	EOF
+
+  # flash `dtbo` into dtbo partition
+  echo >> anykernel.sh
+  cat <<-EOF >> anykernel.sh
+	flash_dtbo;
+	EOF
+
   # clean folder
   rm -rf .git .github modules patch ramdisk LICENSE README.md
   #find . -name "placeholder" -delete
 
-  # packaging
+  cd -
+}
+
+package_kernel() {
+  cd build/anykernel3
+
   if ! cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image*-dtb .; then
     cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image .
     cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb .
@@ -235,4 +272,5 @@ patch_kernel
 add_kernelsu
 optimize_config
 build_kernel
+adapt_anykernel3
 package_kernel
