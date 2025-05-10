@@ -7,3 +7,6 @@ DONT_PATCH_KERNELSU=true
 
 # this kernel support compile with full lto
 ENABLE_FULL_LTO=true
+
+# this device have vendor_boot partition
+HAVE_VENDOR_BOOT=true

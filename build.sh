@@ -218,7 +218,7 @@ adapt_anykernel3() {
   # remove unnecessary configs
   sed -i '/^### AnyKernel install/q' anykernel.sh
 
-  # flash `Image`
+  # flash `Image` and `dtb`
   cat <<-EOF >> anykernel.sh
 	BLOCK=boot;
 	IS_SLOT_DEVICE=auto;
@@ -237,17 +237,19 @@ adapt_anykernel3() {
 		EOF
   fi
 
-  # flash `dtb` into vendor_boot partition
-  echo >> anykernel.sh
-  cat <<-EOF >> anykernel.sh
-	BLOCK=vendor_boot;
-	IS_SLOT_DEVICE=auto;
-	RAMDISK_COMPRESSION=auto;
-	PATCH_VBMETA_FLAG=auto;
-	reset_ak;
-	split_boot;
-	flash_boot;
-	EOF
+  # flash vendor_boot partition
+  if [ "$HAVE_VENDOR_BOOT" = true ]; then
+    echo >> anykernel.sh
+    cat <<-EOF >> anykernel.sh
+		BLOCK=vendor_boot;
+		IS_SLOT_DEVICE=auto;
+		RAMDISK_COMPRESSION=auto;
+		PATCH_VBMETA_FLAG=auto;
+		reset_ak;
+		split_boot;
+		flash_boot;
+		EOF
+  fi
 
   # clean folder
   rm -rf .git .github modules patch ramdisk LICENSE README.md
