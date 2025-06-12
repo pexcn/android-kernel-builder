@@ -1,0 +1,92 @@
+From 70372626c382bc83764f22097c87d563225361af Mon Sep 17 00:00:00 2001
+From: DevriesL <therkduan@gmail.com>
+Date: Mon, 31 Dec 2018 21:42:21 +0800
+Subject: [PATCH 4/9] techpack:display:msm: Introduce exposure adjustment
+ driver
+
+This driver provides exposure adjustment function by Qcom
+DSPP API without change panel hardware brightness to avoid
+PWM flicker on OLED devices, thanks to Sony Mobile for the
+method of setting PCC.
+
+Your device must support ELVSS off function except HBM mode.
+
+Use ea_panel_calc_backlight to remap brightness with hardware
+and DSPP, use ea_panel_mode_ctrl by adding hooks in vendor
+display driver to control exposure adjustment enable/disable.
+
+[okitavera: improve semantics]
+[muralivijay: Adapt to techpack only for spes ]
+[fadlyas07: Remove config guards.]
+
+Co-authored-by: Nanda Oktavera <codeharuka.yusa@gmail.com>
+Co-authored-by: muralivijay <muralidharan9845@gmail.com>
+Co-authored-by: fadlyas07 <mhmmdfdlyas@gmail.com>
+---
+ techpack/display/msm/Makefile                  |  3 ++-
+ techpack/display/msm/dsi/exposure_adjustment.c |  5 -----
+ techpack/display/msm/dsi/exposure_adjustment.h | 12 +++---------
+ 3 files changed, 5 insertions(+), 15 deletions(-)
+
+diff --git a/techpack/display/msm/Makefile b/techpack/display/msm/Makefile
+index c1b601316..9bcd59136 100644
+--- a/techpack/display/msm/Makefile
++++ b/techpack/display/msm/Makefile
+@@ -119,7 +119,8 @@ msm_drm-$(CONFIG_DRM_MSM) += \
+ 	msm_gem_vma.o \
+ 	msm_smmu.o \
+ 	msm_prop.o \
+-	msm_notifier.o\
++	msm_notifier.o \
++        dsi/exposure_adjustment.o
+ 
+ obj-$(CONFIG_DRM_MSM)	+= msm_drm.o
+ 
+diff --git a/techpack/display/msm/dsi/exposure_adjustment.c b/techpack/display/msm/dsi/exposure_adjustment.c
+index 52ae2f455..95d4c6fd6 100644
+--- a/techpack/display/msm/dsi/exposure_adjustment.c
++++ b/techpack/display/msm/dsi/exposure_adjustment.c
+@@ -92,11 +92,6 @@ static int ea_panel_send_pcc(u32 bl_lvl)
+ 	return rc;
+ }
+ 
+-bool ea_panel_is_enabled(void)
+-{
+-	return pcc_backlight_enable;
+-}
+-
+ void ea_panel_mode_ctrl(struct dsi_panel *panel, bool enable)
+ {
+ 	if (pcc_backlight_enable != enable) {
+diff --git a/techpack/display/msm/dsi/exposure_adjustment.h b/techpack/display/msm/dsi/exposure_adjustment.h
+index c50a6b98d..39fc4b1e0 100644
+--- a/techpack/display/msm/dsi/exposure_adjustment.h
++++ b/techpack/display/msm/dsi/exposure_adjustment.h
+@@ -26,21 +26,15 @@
+  * @ELVSS_OFF_THRESHOLD: Minimum backlight threshold for disable smart elvss
+  * @EXPOSURE_ADJUSTMENT_MIN: Minimum available PCC coefficient for OLED panel
+  */
+-#ifdef CONFIG_BOARD_MUNCH
+-#define ELVSS_OFF_THRESHOLD        524
+-#define EXPOSURE_ADJUSTMENT_MIN    1000
+-#else
+-#define ELVSS_OFF_THRESHOLD        500
+-#define EXPOSURE_ADJUSTMENT_MIN    2048
+-#endif
++#define ELVSS_OFF_THRESHOLD        258
++#define EXPOSURE_ADJUSTMENT_MIN    5200
+ 
+ /* PCC coefficient when exposure is 255 */
+-#define EXPOSURE_ADJUSTMENT_MAX    35700
++#define EXPOSURE_ADJUSTMENT_MAX    32768
+ /* Scale for the PCC coefficient with elvss backlight range */
+ #define PCC_BACKLIGHT_SCALE \
+ (EXPOSURE_ADJUSTMENT_MAX - EXPOSURE_ADJUSTMENT_MIN) / ELVSS_OFF_THRESHOLD
+ 
+ void ea_panel_mode_ctrl(struct dsi_panel *panel, bool enable);
+-bool ea_panel_is_enabled(void);
+ u32 ea_panel_calc_backlight(u32 bl_lvl);
+ #endif /* EXPOSURE_ADJUSTMENT_H */
+-- 
+2.39.5
+

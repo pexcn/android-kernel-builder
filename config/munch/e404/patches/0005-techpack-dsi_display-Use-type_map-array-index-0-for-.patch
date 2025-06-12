@@ -1,0 +1,26 @@
+From 96bd76367f3b8d532c0a99b525f20c1815f2a715 Mon Sep 17 00:00:00 2001
+From: ArianK16a <arian.kulmer@gmail.com>
+Date: Thu, 22 Jul 2021 20:36:02 +0100
+Subject: [PATCH 5/9] techpack: dsi_display: Use type_map array index 0 for
+ invalid hbm values
+
+---
+ techpack/display/msm/dsi/dsi_panel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/techpack/display/msm/dsi/dsi_panel.c b/techpack/display/msm/dsi/dsi_panel.c
+index 8bf0b0024..93b618135 100644
+--- a/techpack/display/msm/dsi/dsi_panel.c
++++ b/techpack/display/msm/dsi/dsi_panel.c
+@@ -5514,7 +5514,7 @@ int dsi_panel_apply_hbm_mode(struct dsi_panel *panel)
+ 		panel->hbm_mode < ARRAY_SIZE(type_map))
+ 		type = type_map[panel->hbm_mode];
+ 	else
+-		type = DSI_CMD_SET_MI_HBM_OFF;
++		type = type_map[0];
+ 
+ 	mutex_lock(&panel->panel_lock);
+ 	rc = dsi_panel_tx_cmd_set(panel, type);
+-- 
+2.45.2
+

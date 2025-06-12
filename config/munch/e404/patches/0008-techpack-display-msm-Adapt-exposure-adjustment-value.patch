@@ -1,0 +1,41 @@
+From 5d6f4ccb9ad47159d0ac07b4627edf5b6d47f665 Mon Sep 17 00:00:00 2001
+From: Cyber Knight <cyberknight755@gmail.com>
+Date: Sat, 25 Feb 2023 15:12:55 +0800
+Subject: [PATCH 8/9] techpack: display: msm: Adapt exposure adjustment values
+ for sm8250
+
+- After thorough testing, these values seem to be the most adequate with close to zero flickering and low backlight intensity.
+
+Test: Open https://ledr.com/colours/white.htm, use another phone to record the screen, enable exposure adjustment to see flickering reduce and backlight intensity to be reduced.
+
+[muralivijay: Adapt to spes]
+[johnmart19: Adapt for sm8250]
+
+Co-authored-by: muralivijay <muralidharan9845@gmail.com>
+Co-authored-by: johnmart19 <johnivan19999@gmail.com>
+---
+ techpack/display/msm/dsi/exposure_adjustment.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/techpack/display/msm/dsi/exposure_adjustment.h b/techpack/display/msm/dsi/exposure_adjustment.h
+index da22e4ffd..ff05c4afc 100644
+--- a/techpack/display/msm/dsi/exposure_adjustment.h
++++ b/techpack/display/msm/dsi/exposure_adjustment.h
+@@ -26,11 +26,11 @@
+  * @ELVSS_OFF_THRESHOLD: Minimum backlight threshold for disable smart elvss
+  * @EXPOSURE_ADJUSTMENT_MIN: Minimum available PCC coefficient for OLED panel
+  */
+-#define ELVSS_OFF_THRESHOLD        258
+-#define EXPOSURE_ADJUSTMENT_MIN    5200
++#define ELVSS_OFF_THRESHOLD        500
++#define EXPOSURE_ADJUSTMENT_MIN    2048
+ 
+ /* PCC coefficient when exposure is 255 */
+-#define EXPOSURE_ADJUSTMENT_MAX    32768
++#define EXPOSURE_ADJUSTMENT_MAX    35700
+ /* Scale for the PCC coefficient with elvss backlight range */
+ #define PCC_BACKLIGHT_SCALE \
+ (EXPOSURE_ADJUSTMENT_MAX - EXPOSURE_ADJUSTMENT_MIN) / ELVSS_OFF_THRESHOLD
+-- 
+2.45.2
+

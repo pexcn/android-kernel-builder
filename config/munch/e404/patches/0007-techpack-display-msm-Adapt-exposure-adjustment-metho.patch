@@ -1,0 +1,53 @@
+From 68014dd04c642723cf302514934e75347209910d Mon Sep 17 00:00:00 2001
+From: Nauval Rizky <enuma.alrizky@gmail.com>
+Date: Mon, 9 Mar 2020 11:54:52 +0900
+Subject: [PATCH 7/9] techpack: display: msm: Adapt exposure adjustment methods
+ for sm8250
+
+- This commit was originally made for davinci but it helps for us too as it retains backlight level prior to enabling DC Dim.
+
+[muralivijay: Adapt to spes]
+[fadlyas07: Remove config guards.]
+[johnmart19: Adapt for sm8250]
+
+Co-authored-by: muralivijay <muralidharan9845@gmail.com>
+Co-authored-by: fadlyas07 <mhmmdfdlyas@gmail.com>
+Co-authored-by: johnmart19 <johnivan19999@gmail.com>
+---
+ techpack/display/msm/dsi/dsi_panel.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/techpack/display/msm/dsi/dsi_panel.c b/techpack/display/msm/dsi/dsi_panel.c
+index 3367ef699..045550745 100644
+--- a/techpack/display/msm/dsi/dsi_panel.c
++++ b/techpack/display/msm/dsi/dsi_panel.c
+@@ -24,6 +24,8 @@
+ #include <linux/e404_attributes.h>
+ #endif
+ 
++#include "exposure_adjustment.h"
++
+ /**
+  * topology is currently defined by a set of following 3 values:
+  * 1. num of layer mixers
+@@ -928,6 +930,7 @@ int dsi_panel_set_fod_hbm(struct dsi_panel *panel, bool status)
+ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
+ {
+ 	int rc = 0;
++	int bl_dc_min = panel->bl_config.bl_min_level * 2;
+ 	struct dsi_backlight_config *bl = &panel->bl_config;
+ 	struct dsi_backlight_config *bl_slaver = &panel->bl_slaver_config;
+ 	struct dsi_panel_mi_cfg *mi_cfg = &panel->mi_cfg;
+@@ -935,6 +938,9 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
+ 	if (panel->host_config.ext_bridge_mode)
+ 		return 0;
+ 
++	if (bl_lvl > 0)
++		bl_lvl = ea_panel_calc_backlight(bl_lvl < bl_dc_min ? bl_dc_min : bl_lvl);
++
+ 	DSI_DEBUG("backlight type:%d lvl:%d\n", bl->type, bl_lvl);
+ 
+ 	
+-- 
+2.39.5
+

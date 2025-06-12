@@ -1,0 +1,113 @@
+From 1c31e136de3fa707cd71156e6072a7677d2f29c7 Mon Sep 17 00:00:00 2001
+From: HDzungx <hdzungx@gmail.com>
+Date: Sun, 9 Feb 2025 21:43:40 +0700
+Subject: [PATCH 2/9] Revert "techpack: display: Improve dimlayer exposure
+ alpha model"
+
+This reverts commit 655782a014614c38d47c5fe32fb8ff8c4603a284.
+---
+ techpack/display/msm/sde/sde_expo_dim_layer.c |  8 ++--
+ techpack/display/msm/sde/sde_expo_dim_layer.h | 38 +++++++++----------
+ 2 files changed, 23 insertions(+), 23 deletions(-)
+
+diff --git a/techpack/display/msm/sde/sde_expo_dim_layer.c b/techpack/display/msm/sde/sde_expo_dim_layer.c
+index 425c0ae54..107c85034 100644
+--- a/techpack/display/msm/sde/sde_expo_dim_layer.c
++++ b/techpack/display/msm/sde/sde_expo_dim_layer.c
+@@ -33,7 +33,7 @@ static int interpolate(int x, int xa, int xb, int ya, int yb)
+ 	return ya + factor + plus + sub;
+ }
+ 
+-static int brightness_to_alpha(uint16_t brightness)
++static int brightness_to_alpha(uint8_t brightness)
+ {
+ 	int level = ARRAY_SIZE(brightness_alpha_lut);
+ 	int index, alpha;
+@@ -57,7 +57,7 @@ static int brightness_to_alpha(uint16_t brightness)
+ 	return alpha;
+ }
+ 
+-static void set_dim_layer_exposure(uint16_t brightness, struct dsi_display *display)
++static void set_dim_layer_exposure(uint8_t brightness, struct dsi_display *display)
+ {
+ 	struct drm_crtc *crtc;
+ 	struct drm_crtc_state *state;
+@@ -85,7 +85,7 @@ static void set_dim_layer_exposure(uint16_t brightness, struct dsi_display *disp
+ uint32_t expo_map_dim_level(uint32_t level, struct dsi_display *display)
+ {
+ 	uint32_t override_level, brightness;
+-	uint16_t dim_brightness;
++	uint8_t dim_brightness;
+ 
+ 	if (level < DIM_THRES_LEVEL) {
+ 		override_level = DIM_THRES_LEVEL;
+@@ -94,7 +94,7 @@ uint32_t expo_map_dim_level(uint32_t level, struct dsi_display *display)
+ 	}
+ 
+ 	brightness = level / BACKLIGHT_DIM_SCALE;
+-	dim_brightness = brightness > U16_MAX ? U16_MAX : brightness;
++	dim_brightness = brightness > U8_MAX ? U8_MAX : brightness;
+ 
+ 	set_dim_layer_exposure(dim_brightness, display);
+ 
+diff --git a/techpack/display/msm/sde/sde_expo_dim_layer.h b/techpack/display/msm/sde/sde_expo_dim_layer.h
+index 919a16886..66d66aafe 100644
+--- a/techpack/display/msm/sde/sde_expo_dim_layer.h
++++ b/techpack/display/msm/sde/sde_expo_dim_layer.h
+@@ -19,7 +19,7 @@
+ #define SDE_EXPO_DIM_LAYER_H
+ 
+ #define DIM_THRES_LEVEL 440
+-#define BACKLIGHT_DIM_SCALE 1
++#define BACKLIGHT_DIM_SCALE 6
+ 
+ enum {
+ 	BRIGHTNESS = 0,
+@@ -27,26 +27,26 @@ enum {
+ 	LUT_MAX,
+ };
+ 
+-static const uint16_t brightness_alpha_lut[][LUT_MAX] = {
++static const uint8_t brightness_alpha_lut[][LUT_MAX] = {
+ /* {brightness, alpha} */
+ 	{0, 0xFF},
+-	{2, 0xD7},
+-	{20, 0xB9},
+-	{35, 0xAA},
+-	{50, 0x9B},
+-	{65, 0x8C},
+-	{80, 0x7D},
+-	{90, 0x78},
+-	{100, 0x73},
+-	{120, 0x6C},
+-	{140, 0x64},
+-	{160, 0x5A},
+-	{180, 0x50},
+-	{200, 0x46},
+-	{240, 0x32},
+-	{270, 0x28},
+-	{360, 0x1E},
+-	{440, 0x00}
++	{2, 0xE0},
++	{3, 0xD5},
++	{4, 0xD3},
++	{5, 0xD0},
++	{6, 0xCE},
++	{7, 0xCB},
++	{8, 0xC8},
++	{9, 0xC4},
++	{10, 0xBA},
++	{12, 0xB0},
++	{15, 0xA0},
++	{20, 0x8B},
++	{30, 0x72},
++	{32, 0x5A},
++	{45, 0x38},
++	{60, 0x0E},
++	{78, 0x00}
+ };
+ 
+ uint32_t expo_map_dim_level(uint32_t level, struct dsi_display *display);
+-- 
+2.45.2
+

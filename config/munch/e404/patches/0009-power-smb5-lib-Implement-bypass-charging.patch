@@ -1,20 +1,21 @@
-From d765e1acf2c165834f052076aa4279915d0af3b4 Mon Sep 17 00:00:00 2001
-From: pexcn <pexcn97@gmail.com>
-Date: Thu, 24 Apr 2025 09:42:41 +0800
-Subject: [PATCH] power: smb5-lib: implement bypass charging
+From 4e35a92bb8331a2af8ccea11330c67dafabe7550 Mon Sep 17 00:00:00 2001
+From: Rve27 <rve27github@gmail.com>
+Date: Wed, 4 Jun 2025 14:15:18 +0000
+Subject: [PATCH 9/9] power: smb5-lib: Implement bypass charging
 
-ref: https://github.com/diphons/kernel_xiaomi_sm8250/commit/951ec10fa843def5f5819cb22c843b410a8e0c9f
-Signed-off-by: pexcn <pexcn97@gmail.com>
+[diphons]: Adapted to Xiaomi Kona
+Authored-by: Rve27 <rve27github@gmail.com>
+Signed-off-by: Rudi Setiyawan <diphons@gmail.com>
 ---
  drivers/power/supply/qcom/smb5-lib-munch.c | 39 +++++++++++++++++++---
  drivers/power/supply/qcom/smb5-lib-munch.h |  1 +
  2 files changed, 35 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/power/supply/qcom/smb5-lib-munch.c b/drivers/power/supply/qcom/smb5-lib-munch.c
-index c7fcadd..a3d91a3 100644
+index 1cb86c467..2142e6427 100755
 --- a/drivers/power/supply/qcom/smb5-lib-munch.c
 +++ b/drivers/power/supply/qcom/smb5-lib-munch.c
-@@ -37,6 +37,7 @@
+@@ -45,6 +45,7 @@
  
  bool off_charge_flag;
  static bool first_boot_flag;
@@ -22,7 +23,7 @@ index c7fcadd..a3d91a3 100644
  
  static void update_sw_icl_max(struct smb_charger *chg, int pst);
  static int smblib_get_prop_typec_mode(struct smb_charger *chg);
-@@ -2395,9 +2396,14 @@ int smblib_vbus_regulator_is_enabled(struct regulator_dev *rdev)
+@@ -2403,9 +2404,14 @@ int smblib_vbus_regulator_is_enabled(struct regulator_dev *rdev)
  int smblib_get_prop_input_suspend(struct smb_charger *chg,
  				  union power_supply_propval *val)
  {
@@ -40,7 +41,7 @@ index c7fcadd..a3d91a3 100644
  	return 0;
  }
  
-@@ -3164,20 +3170,37 @@ int smblib_set_prop_input_suspend(struct smb_charger *chg,
+@@ -3171,20 +3177,37 @@ int smblib_set_prop_input_suspend(struct smb_charger *chg,
  	int rc = 0;
  
  	/* vote 0mA when suspended */
@@ -80,7 +81,7 @@ index c7fcadd..a3d91a3 100644
  	power_supply_changed(chg->batt_psy);
  	return rc;
  }
-@@ -3577,6 +3600,9 @@ static void smblib_thermal_setting_work(struct work_struct *work)
+@@ -3584,6 +3607,9 @@ static void smblib_thermal_setting_work(struct work_struct *work)
  	struct smb_charger *chg = container_of(work, struct smb_charger,
  			thermal_setting_work.work);
  
@@ -90,7 +91,7 @@ index c7fcadd..a3d91a3 100644
  	if (chg->pps_thermal_level > chg->system_temp_level) {
  		if (chg->pps_thermal_level - chg->system_temp_level >= 2)
  			chg->pps_thermal_level -= 2;
-@@ -3639,6 +3665,9 @@ int smblib_set_prop_system_temp_level(struct smb_charger *chg,
+@@ -3646,6 +3672,9 @@ int smblib_set_prop_system_temp_level(struct smb_charger *chg,
  	vote(chg->chg_disable_votable, THERMAL_DAEMON_VOTER, false, 0);
  #endif
  
@@ -101,7 +102,7 @@ index c7fcadd..a3d91a3 100644
  		schedule_delayed_work(&chg->thermal_setting_work, 3 * HZ);
  	else
 diff --git a/drivers/power/supply/qcom/smb5-lib-munch.h b/drivers/power/supply/qcom/smb5-lib-munch.h
-index 4a6bdfb..6dadc63 100644
+index 4a6bdfb9e..6dadc63bf 100644
 --- a/drivers/power/supply/qcom/smb5-lib-munch.h
 +++ b/drivers/power/supply/qcom/smb5-lib-munch.h
 @@ -101,6 +101,7 @@ enum print_reason {

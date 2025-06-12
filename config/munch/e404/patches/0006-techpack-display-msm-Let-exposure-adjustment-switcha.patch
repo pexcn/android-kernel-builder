@@ -1,0 +1,111 @@
+From 01d1e466a97494cd745f0367c1d7173ff7e7b272 Mon Sep 17 00:00:00 2001
+From: XiNGRZ <chenxingyu92@gmail.com>
+Date: Thu, 11 Apr 2019 16:29:44 +0800
+Subject: [PATCH 6/9] techpack: display:msm: Let exposure adjustment switchable
+ via sysfs
+
+[muralivijay: Adapt to spes]
+[fadlyas07: Remove config guards]
+[johnmart19: Adapt for sm8250]
+
+Co-authored-by: muralivijay <muralidharan9845@gmail.com>
+Co-authored-by: fadlyas07 <mhmmdfdlyas@gmail.com>
+Co-authored-by: johnmart19 <johnivan19999@gmail.com>
+---
+ techpack/display/msm/dsi/dsi_panel.c          | 44 +++++++++++++++++++
+ .../display/msm/dsi/exposure_adjustment.c     |  5 +++
+ .../display/msm/dsi/exposure_adjustment.h     |  1 +
+ 3 files changed, 50 insertions(+)
+
+diff --git a/techpack/display/msm/dsi/dsi_panel.c b/techpack/display/msm/dsi/dsi_panel.c
+index 93b618135..2dadae893 100644
+--- a/techpack/display/msm/dsi/dsi_panel.c
++++ b/techpack/display/msm/dsi/dsi_panel.c
+@@ -4090,6 +4090,45 @@ void dsi_panel_put(struct dsi_panel *panel)
+ 	kfree(panel);
+ }
+ 
++static struct dsi_panel * set_panel;
++static ssize_t mdss_fb_set_ea_enable(struct device *dev,
++	struct device_attribute *attr, const char *buf, size_t len)
++{
++	u32 ea_enable;
++
++	if (sscanf(buf, "%d", &ea_enable) != 1) {
++		DSI_ERR("sccanf buf error!\n");
++		return len;
++	}
++
++	ea_panel_mode_ctrl(set_panel, ea_enable != 0);
++
++	return len;
++}
++
++static ssize_t mdss_fb_get_ea_enable(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	int ret;
++	bool ea_enable = ea_panel_is_enabled();
++
++	ret = scnprintf(buf, PAGE_SIZE, "%d\n", ea_enable ? 1 : 0);
++
++	return ret;
++}
++
++static DEVICE_ATTR(msm_fb_ea_enable, S_IRUGO | S_IWUSR,
++	mdss_fb_get_ea_enable, mdss_fb_set_ea_enable);
++
++static struct attribute *mdss_fb_attrs[] = {
++	&dev_attr_msm_fb_ea_enable.attr,
++	NULL,
++};
++
++static struct attribute_group mdss_fb_attr_group = {
++	.attrs = mdss_fb_attrs,
++};
++
+ int dsi_panel_drv_init(struct dsi_panel *panel,
+ 		       struct mipi_dsi_host *host)
+ {
+@@ -4144,6 +4183,11 @@ int dsi_panel_drv_init(struct dsi_panel *panel,
+ 		goto error_gpio_release;
+ 	}
+ 
++	rc = sysfs_create_group(&(panel->parent->kobj), &mdss_fb_attr_group);
++	if (rc)
++		pr_err("sysfs group creation failed, rc=%d\n", rc);
++	set_panel = panel;
++
+ 	goto exit;
+ 
+ error_gpio_release:
+diff --git a/techpack/display/msm/dsi/exposure_adjustment.c b/techpack/display/msm/dsi/exposure_adjustment.c
+index 95d4c6fd6..52ae2f455 100644
+--- a/techpack/display/msm/dsi/exposure_adjustment.c
++++ b/techpack/display/msm/dsi/exposure_adjustment.c
+@@ -92,6 +92,11 @@ static int ea_panel_send_pcc(u32 bl_lvl)
+ 	return rc;
+ }
+ 
++bool ea_panel_is_enabled(void)
++{
++	return pcc_backlight_enable;
++}
++
+ void ea_panel_mode_ctrl(struct dsi_panel *panel, bool enable)
+ {
+ 	if (pcc_backlight_enable != enable) {
+diff --git a/techpack/display/msm/dsi/exposure_adjustment.h b/techpack/display/msm/dsi/exposure_adjustment.h
+index 39fc4b1e0..da22e4ffd 100644
+--- a/techpack/display/msm/dsi/exposure_adjustment.h
++++ b/techpack/display/msm/dsi/exposure_adjustment.h
+@@ -36,5 +36,6 @@
+ (EXPOSURE_ADJUSTMENT_MAX - EXPOSURE_ADJUSTMENT_MIN) / ELVSS_OFF_THRESHOLD
+ 
+ void ea_panel_mode_ctrl(struct dsi_panel *panel, bool enable);
++bool ea_panel_is_enabled(void);
+ u32 ea_panel_calc_backlight(u32 bl_lvl);
+ #endif /* EXPOSURE_ADJUSTMENT_H */
+-- 
+2.45.2
+
