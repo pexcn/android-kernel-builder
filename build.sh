@@ -262,7 +262,7 @@ package_kernel() {
   cd build/anykernel3
 
   cp $CUR_DIR/build/kernel/out/arch/arm64/boot/Image . || :
-  cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb . || :
+  cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb . || cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtb.img . || :
   cp $CUR_DIR/build/kernel/out/arch/arm64/boot/dtbo.img . || :
 
   zip -r $CUR_DIR/build/$DEVICE_CODENAME-$BUILD_CONFIG-kernel.zip ./*
