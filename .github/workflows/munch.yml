@@ -31,6 +31,7 @@ jobs:
       matrix:
         CONFIG:
           - e404
+          - n0kernel
 
     steps:
       - name: Checkout sources

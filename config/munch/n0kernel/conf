@@ -1,0 +1,15 @@
+KERNEL_SOURCE=https://github.com/xiaomi-munch/android_kernel_xiaomi_munch.git
+KERNEL_COMMIT=ac57c219281f24429444b1fb3ad79930a93f7bdb
+KERNEL_CONFIG=vendor/munch_defconfig
+
+# kernelsu was built-in in kernel source
+DONT_PATCH_KERNELSU=true
+
+# this kernel support compile with full lto
+ENABLE_FULL_LTO=true
+
+# disable `do.devicecheck` for anykernel3
+#DISABLE_DEVICE_CHECK=true
+
+# this device have vendor_boot partition
+HAVE_VENDOR_BOOT=true
