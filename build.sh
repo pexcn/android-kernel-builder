@@ -87,7 +87,7 @@ add_kernelsu() {
   cd build/kernel
 
   # integrate kernelsu-next
-  curl -sSL "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.6
+  curl -sSL "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -s v1.0.8
 
   # prepare .config
   make "${MAKE_FLAGS[@]}" $KERNEL_CONFIG
@@ -95,7 +95,7 @@ add_kernelsu() {
   # update .config
   scripts/config --file out/.config \
     --enable CONFIG_KSU \
-    --disable CONFIG_KSU_WITH_KPROBES
+    --disable CONFIG_KSU_KPROBES_HOOK
 
   # re-generate kernel config
   make "${MAKE_FLAGS[@]}" savedefconfig
