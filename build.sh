@@ -276,7 +276,7 @@ prepare_env
 get_sources
 patch_kernel
 add_kernelsu
-optimize_config
+#optimize_config
 build_kernel
 adapt_anykernel3
 package_kernel
