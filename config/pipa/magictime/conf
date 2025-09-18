@@ -1,0 +1,15 @@
+KERNEL_SOURCE=https://github.com/xiaomi-pipa/android_kernel_xiaomi_sm8250.git
+KERNEL_COMMIT=13820ff72571d96526fb448cd962e411d888099d
+KERNEL_CONFIG="pipa_defconfig vendor/xiaomi/magictime-common.config"
+
+# kernelsu was built-in in kernel source
+DONT_PATCH_KERNELSU=true
+
+# this kernel support compile with full lto
+#ENABLE_FULL_LTO=true
+
+# disable `do.devicecheck` for anykernel3
+#DISABLE_DEVICE_CHECK=true
+
+# this device have vendor_boot partition
+HAVE_VENDOR_BOOT=true
