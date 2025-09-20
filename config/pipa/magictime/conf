@@ -1,5 +1,5 @@
 KERNEL_SOURCE=https://github.com/xiaomi-pipa/android_kernel_xiaomi_sm8250.git
-KERNEL_COMMIT=a0334c9808e7b1cd6d96c75e7ef4bd9fd4ddbd88
+KERNEL_COMMIT=ec86563be606abf3c7dc2ff58bc4fdf50020b34c
 KERNEL_CONFIG="pipa_defconfig vendor/xiaomi/magictime-common.config"
 
 # kernelsu was built-in in kernel source
