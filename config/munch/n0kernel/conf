@@ -1,5 +1,5 @@
 KERNEL_SOURCE=https://github.com/xiaomi-munch/android_kernel_xiaomi_munch.git
-KERNEL_COMMIT=a54f65eeb33a8e5d78b5ccc70c3a355fc8782c8f
+KERNEL_COMMIT=de98ddff1857f91785b54b41252fe9ba076eab64
 KERNEL_CONFIG=vendor/munch_defconfig
 
 # kernelsu was built-in in kernel source
