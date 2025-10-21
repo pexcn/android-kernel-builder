@@ -143,7 +143,6 @@ optimize_config() {
     --disable CONFIG_FTRACE
   # disable unused features
   scripts/config --file out/.config \
-    --disable CONFIG_KSU_SUSFS \
     --disable CONFIG_BLK_DEV_RAM \
     --disable CONFIG_ZRAM_WRITEBACK \
     --disable CONFIG_VIRTIO_MENU \
